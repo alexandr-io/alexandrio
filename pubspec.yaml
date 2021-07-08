@@ -1,0 +1,50 @@
+name: alexandrio
+description: A new Flutter project.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev using `pub publish`
+version: 1.0.38+35
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.3
+  url_launcher: ^6.0.6
+  hive: ^2.0.4
+  hive_flutter: ^1.0.0
+  webview_flutter: ^2.0.8
+  file_picker: ^3.0.2+2
+  dio: ^4.0.0
+  flutter_local_notifications: ^6.0.0
+  bloc: ^7.0.0
+  flutter_bloc: ^7.0.1
+  equatable: ^2.0.2
+  collection: ^1.15.0
+  device_info_plus: ^1.0.1
+  version: ^2.0.0
+  package_info: ^2.0.2
+  path_provider: ^2.0.2
+  open_file: ^3.2.1
+  dart_downloader:
+    git: https://github.com/williambulin/dart_downloader.git
+
+dev_dependencies:
+  pedantic: ^1.11.0
+  flutter_lints: ^1.0.3
+  hive_generator: ^1.1.0
+  build_runner: ^2.0.4
+  flutter_launcher_icons: ^0.9.0 # flutter pub run flutter_launcher_icons:main
+
+flutter:
+  uses-material-design: true
+  # assets:
+  #   - assets/a.png
+
+# flutter_icons:
+#   android: true
+#   ios: true
+#   remove_alpha_ios: true
+#   image_path: "assets/a.png"
+#   adaptive_icon_background: "#FFFFFF"
+#   adaptive_icon_foreground: "assets/a.png"

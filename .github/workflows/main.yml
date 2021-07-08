@@ -39,7 +39,7 @@ jobs:
           sed -i '/_frameDuration = _nextFrame!.duration;/a \ \ \ \ \ \ if (_frameDuration!.inMilliseconds <= 10) _frameDuration = Duration(milliseconds: 100);' $(which flutter | head -n 1 | sed -e 's/\\/\//g' -e 's/\/bin\/flutter.*//')/packages/flutter/lib/src/painting/image_stream.dart
 
       - name: Generate project files and cleanup
-        working-directory: ./chatsealexandrion
+        working-directory: ./alexandrio
         run: |
           flutter create --org com.alexandrio .
           rm -rf test
@@ -49,12 +49,12 @@ jobs:
           sed -i '/.*package=".*".*/a \ \ \ <uses-permission android:name="android.permission.INTERNET"/>' ./android/app/src/main/AndroidManifest.xml
           sed -i '/.*release {.*/a \ \ \ \ \ \ \ \ \ \ \ \ shrinkResources false\n\ \ \ \ \ \ \ \ \ \ \ \ minifyEnabled false' ./android/app/build.gradle
           # sed -i 's/minSdkVersion 16/minSdkVersion 19/' ./android/app/build.gradle
-          sed -i '/android {/i def keystoreProperties = new Properties()\ndef keystorePropertiesFile = rootProject.file('\''../../signingkeys/key.properties'\'')\nif (keystorePropertiesFile.exists()) {\n    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))\n}\n' ./android/app/build.gradle
-          sed -i '/.*buildTypes {/i \ \ \ \ signingConfigs {\n\ \ \ \ \ \ \ \ release {\n\ \ \ \ \ \ \ \ \ \ \ \ keyAlias keystoreProperties['\''keyAlias'\'']\n\ \ \ \ \ \ \ \ \ \ \ \ keyPassword keystoreProperties['\''keyPassword'\'']\n\ \ \ \ \ \ \ \ \ \ \ \ storeFile keystoreProperties['\''storeFile'\''] ? file(keystoreProperties['\''storeFile'\'']) : null\n\ \ \ \ \ \ \ \ \ \ \ \ storePassword keystoreProperties['\''storePassword'\'']\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }' ./android/app/build.gradle
-          sed -i 's/signingConfig signingConfigs.debug/signingConfig signingConfigs.release/' ./android/app/build.gradle
+          # sed -i '/android {/i def keystoreProperties = new Properties()\ndef keystorePropertiesFile = rootProject.file('\''../../signingkeys/key.properties'\'')\nif (keystorePropertiesFile.exists()) {\n    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))\n}\n' ./android/app/build.gradle
+          # sed -i '/.*buildTypes {/i \ \ \ \ signingConfigs {\n\ \ \ \ \ \ \ \ release {\n\ \ \ \ \ \ \ \ \ \ \ \ keyAlias keystoreProperties['\''keyAlias'\'']\n\ \ \ \ \ \ \ \ \ \ \ \ keyPassword keystoreProperties['\''keyPassword'\'']\n\ \ \ \ \ \ \ \ \ \ \ \ storeFile keystoreProperties['\''storeFile'\''] ? file(keystoreProperties['\''storeFile'\'']) : null\n\ \ \ \ \ \ \ \ \ \ \ \ storePassword keystoreProperties['\''storePassword'\'']\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }' ./android/app/build.gradle
+          # sed -i 's/signingConfig signingConfigs.debug/signingConfig signingConfigs.release/' ./android/app/build.gradle
           sed -i "/io.flutter.embedding.android.FlutterActivity/a import android.os.Bundle\nimport android.os.Build\nimport androidx.annotation.NonNull\nimport io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode.transparent\nimport io.flutter.embedding.engine.FlutterEngine\nimport io.flutter.plugins.GeneratedPluginRegistrant" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
           sed -i "/FlutterActivity()/a \ \ \ \ override fun onCreate(savedInstanceState: Bundle?) {\n\ \ \ \ \ \ \ \ super.onCreate(savedInstanceState)\n\ \ \ \ \ \ \ \ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {\n\ \ \ \ \ \ \ \ \ \ \ \ window.setDecorFitsSystemWindows(false)\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
-          flutter pub run flutter_launcher_icons:main
+          # flutter pub run flutter_launcher_icons:main
           flutter build apk
 
       - name: Prepare release files
@@ -147,7 +147,7 @@ jobs:
           gsed -i 's/<string>alexandrio<\/string>/<string>Alexandrio<\/string>/' ./ios/Runner/Info.plist
           gsed -i '/<dict>/a \ \ <key>UIBackgroundModes</key>\n\ \ <array>\n\ \ \ \ <string>audio</string>\n\ \ </array>' ios/Runner/Info.plist
           gsed -i '/<dict>/a \ \ <key>NSPhotoLibraryUsageDescription</key>\n\ \ <string>Alexandrio requests to access your files to allow file selection.</string>' ios/Runner/Info.plist
-          flutter pub run flutter_launcher_icons:main
+          # flutter pub run flutter_launcher_icons:main
           flutter build ios --no-codesign
           # '<key>UIBackgroundModes</key>\	\<array>\	\	<string>audio</string>\	\	<string>bluetooth-central</string>\	\	<string>bluetooth-peripheral</string>\	\	<string>external-accessory</string>\	\	<string>fetch</string>\	\	<string>location</string>\	\	<string>processing</string>\	\	<string>remote-notification</string>\	\	<string>voip</string>\	\</array>'
 

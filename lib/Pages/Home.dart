@@ -61,8 +61,8 @@ class _HomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.system_update,
-                color: Theme.of(context).colorScheme.primary,
+                Icons.settings,
+                // color: Theme.of(context).colorScheme.primary,
               ),
               onPressed: () async => Navigator.of(context).push(
                 MaterialPageRoute(

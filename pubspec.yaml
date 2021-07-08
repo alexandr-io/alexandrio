@@ -28,6 +28,7 @@ dependencies:
   open_file: ^3.2.1
   dart_downloader:
     git: https://github.com/williambulin/dart_downloader.git
+  font_awesome_flutter: ^9.1.0
 
 dev_dependencies:
   pedantic: ^1.11.0

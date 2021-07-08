@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:alexandrio/Pages/Settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../UpdateModal.dart';
 
@@ -28,6 +30,10 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+      UpdateModal.searchForUpdate(context);
+    });
+
     super.initState();
   }
 
@@ -39,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Alexandrio (build 2)'),
+          title: Text('Alexandrio'),
           actions: [
             FutureBuilder<bool>(
               future: updateFuture,
@@ -52,6 +58,17 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () async => UpdateModal.searchForUpdate(context),
                     )
                   : SizedBox(),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.system_update,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () async => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(),
+                ),
+              ),
             ),
           ],
         ),

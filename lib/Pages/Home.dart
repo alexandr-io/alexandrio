@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Alexandrio'),
+          title: Text('Alexandrio (build 2)'),
           actions: [
             FutureBuilder<bool>(
               future: updateFuture,

@@ -1,6 +1,6 @@
 name: alexandrio
-description: A new Flutter project.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev using `pub publish`
+description: The alexandrio.cloud Flutter application.
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   url_launcher: ^6.0.6
   hive: ^2.0.4
   hive_flutter: ^1.0.0
-  webview_flutter: ^2.0.8
+  # webview_flutter: ^2.0.8
   file_picker: ^3.0.2+2
   dio: ^4.0.0
   flutter_local_notifications: ^6.0.0
@@ -29,6 +29,8 @@ dependencies:
   dart_downloader:
     git: https://github.com/williambulin/dart_downloader.git
   font_awesome_flutter: ^9.1.0
+  amberkit:
+    path: ../../williambulin/amberkit
 
 dev_dependencies:
   pedantic: ^1.11.0
@@ -39,13 +41,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # assets:
-  #   - assets/a.png
-
-# flutter_icons:
-#   android: true
-#   ios: true
-#   remove_alpha_ios: true
-#   image_path: "assets/a.png"
-#   adaptive_icon_background: "#FFFFFF"
-#   adaptive_icon_foreground: "assets/a.png"

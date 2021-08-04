@@ -1,36 +1,45 @@
+import 'package:amberkit/amberkit.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'Pages/Home.dart';
-import 'Theme/ThemeBloc.dart';
-import 'Theme/ThemeManager.dart';
-import 'Theme/ThemeState.dart';
+import 'dart:ui';
 
-/// Our [App] class. It represents our MaterialApp and will redirect us to our app's homepage.
-class App extends StatefulWidget {
-  @override
-  State<App> createState() => _AppState();
-}
+import 'pages/home.dart';
+import 'pages/login.dart';
 
-class _AppState extends State<App> {
+class App extends StatelessWidget {
+  final String? initialRoute;
+
+  const App({
+    Key? key,
+    this.initialRoute,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) => BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          if (themeState is ThemeLoaded) {
-            return MaterialApp(
-              darkTheme: ThemeManager.buildTheme(Brightness.dark, themeState.colorScheme),
-              theme: ThemeManager.buildTheme(Brightness.light, themeState.colorScheme),
-              themeMode: themeState.mode,
-              debugShowCheckedModeBanner: false,
-              home: Builder(
-                builder: (context) => ThemeManager.routeWrapper(
-                  context: context,
-                  child: HomePage(),
-                ),
+        builder: (context, state) {
+          if (state is ThemeLoaded) {
+            return RouteManager(
+              builder: (context, routeManager) => MaterialApp(
+                title: 'Alexandrio',
+                onGenerateTitle: (context) => 'Alexandrio',
+                initialRoute: initialRoute ?? routeManager.initialRoute,
+                onGenerateInitialRoutes: routeManager.onGenerateInitialRoutes,
+                onGenerateRoute: routeManager.onGenerateRoute,
+                darkTheme: ThemeManager.buildTheme(Brightness.dark, state.colorScheme),
+                theme: ThemeManager.buildTheme(Brightness.light, state.colorScheme),
+                themeMode: state.mode,
+                debugShowCheckedModeBanner: false,
               ),
+              initialRoute: '/',
+              routes: {
+                '/login': () => LoginPage(),
+                '/': () => HomePage(),
+              },
             );
           }
+
           return Center(child: CircularProgressIndicator.adaptive());
         },
       );

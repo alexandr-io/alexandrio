@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'dart:ui';
 
+import 'pages/update.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
 
@@ -32,8 +33,9 @@ class App extends StatelessWidget {
                 themeMode: state.mode,
                 debugShowCheckedModeBanner: false,
               ),
-              initialRoute: '/',
+              initialRoute: '/update',
               routes: {
+                '/update': () => UpdatePage(),
                 '/login': () => LoginPage(),
                 '/': () => HomePage(),
               },

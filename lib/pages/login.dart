@@ -1,6 +1,4 @@
-import 'package:alexandrio/login/login_bloc.dart';
-import 'package:alexandrio/login/login_event.dart';
-import 'package:alexandrio/login/login_state.dart';
+import 'package:alexandrio/api/alexandrio/alexandrio.dart' as alexandrio;
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: BlocBuilder<LoginBloc, LoginState>(
+        body: BlocBuilder<alexandrio.ClientBloc, alexandrio.ClientState>(
           builder: (context, state) => SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -41,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Icon(Icons.book, size: 128.0),
                       ),
                       SizedBox(height: kPadding.vertical),
-                      if (state is LoginDisconnected) ...[
+                      if (state is alexandrio.ClientDisconnected) ...[
                         TextField(
                           decoration: InputDecoration(
                             filled: true,
@@ -68,13 +66,13 @@ class _LoginPageState extends State<LoginPage> {
                               padding: MaterialStateProperty.all(kPadding * 2.0),
                             ),
                             onPressed: () {
-                              BlocProvider.of<LoginBloc>(context).add(LoginConnect(login: loginController.text, password: passwordController.text));
+                              BlocProvider.of<alexandrio.ClientBloc>(context).add(alexandrio.ClientConnect(loginController.text, passwordController.text));
                             },
                             child: Text('Login'),
                           ),
                         ),
                       ],
-                      if (state is LoginConnecting) ...[
+                      if (state is alexandrio.ClientConnecting) ...[
                         Text('Connecting as ${state.login}'),
                         SizedBox(height: kPadding.vertical),
                         CircularProgressIndicator.adaptive(),

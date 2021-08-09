@@ -33,7 +33,7 @@ class App extends StatelessWidget {
                 themeMode: state.mode,
                 debugShowCheckedModeBanner: false,
               ),
-              initialRoute: '/update',
+              initialRoute: '/login',
               routes: {
                 '/update': () => UpdatePage(),
                 '/login': () => LoginPage(),

@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:dart_downloader/DownloadManager.dart';
 
 import 'app.dart';
-import 'login/login_bloc.dart';
+import 'api/alexandrio/alexandrio.dart' as alexandrio;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +19,8 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => LoginBloc()),
-        BlocProvider(create: (context) => ThemeBloc(themeBox)),
+        BlocProvider(create: (context) => alexandrio.ClientBloc()),
+        BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'red', mode: ThemeMode.dark)),
         BlocProvider(create: (context) => DownloadManager()),
       ],
       child: App(),

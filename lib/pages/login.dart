@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alexandrio/api/alexandrio/alexandrio.dart' as alexandrio;
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +12,19 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  late StreamSubscription sub;
+
+  @override
+  void initState() {
+    sub = BlocProvider.of<alexandrio.ClientBloc>(context).stream.listen((event) {
+      if (event is alexandrio.ClientConnected) Navigator.of(context).pushReplacementNamed('/');
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
+    sub.cancel();
     loginController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -69,6 +81,23 @@ class _LoginPageState extends State<LoginPage> {
                               BlocProvider.of<alexandrio.ClientBloc>(context).add(alexandrio.ClientConnect(loginController.text, passwordController.text));
                             },
                             child: Text('Login'),
+                          ),
+                        ),
+                      ],
+                      if (state is alexandrio.ClientConnected) ...[
+                        SizedBox(height: kPadding.vertical),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(0.0),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: kBorderRadiusCircular)),
+                              padding: MaterialStateProperty.all(kPadding * 2.0),
+                            ),
+                            onPressed: () {
+                              BlocProvider.of<alexandrio.ClientBloc>(context).add(alexandrio.ClientDisconnect());
+                            },
+                            child: Text('Disconnect'),
                           ),
                         ),
                       ],

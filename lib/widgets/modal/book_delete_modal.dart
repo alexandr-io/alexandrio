@@ -1,13 +1,16 @@
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
-class LibraryDeleteModal extends StatelessWidget {
+class BookDeleteModal extends StatelessWidget {
+  final alexandrio.Book book;
   final alexandrio.LibraryCubit library;
 
-  const LibraryDeleteModal({
+  const BookDeleteModal({
     Key? key,
+    required this.book,
     required this.library,
   }) : super(key: key);
 
@@ -18,7 +21,7 @@ class LibraryDeleteModal extends StatelessWidget {
         children: [
           SizedBox(height: kPadding.vertical),
           Center(
-            child: Text('Delete ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
+            child: Text('Delete ${book.title} from ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
           ),
           SizedBox(height: kPadding.vertical),
           SizedBox(

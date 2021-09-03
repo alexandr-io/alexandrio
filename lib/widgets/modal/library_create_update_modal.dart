@@ -1,7 +1,15 @@
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
+import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
-class LibraryEditModal extends StatelessWidget {
+class LibraryCreateUpdateModal extends StatelessWidget {
+  final alexandrio.LibraryCubit? library;
+
+  const LibraryCreateUpdateModal({
+    Key? key,
+    this.library,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Column(
         // shrinkWrap: true,
@@ -9,7 +17,27 @@ class LibraryEditModal extends StatelessWidget {
         children: [
           SizedBox(height: kPadding.vertical),
           Center(
-            child: Text('Edit Library 1', style: Theme.of(context).textTheme.headline6),
+            child: Text(library == null ? 'Create Library' : 'Edit ${library!.state.title}', style: Theme.of(context).textTheme.headline6),
+          ),
+          SizedBox(height: kPadding.vertical),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Title',
+                filled: true,
+              ),
+            ),
+          ),
+          SizedBox(height: kPadding.vertical),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Description',
+                filled: true,
+              ),
+            ),
           ),
           SizedBox(height: kPadding.vertical),
           SizedBox(

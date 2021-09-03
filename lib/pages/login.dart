@@ -10,8 +10,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController loginController = TextEditingController(text: 'BenjaminPraud');
+  TextEditingController passwordController = TextEditingController(text: 'test');
   late StreamSubscription sub;
 
   @override

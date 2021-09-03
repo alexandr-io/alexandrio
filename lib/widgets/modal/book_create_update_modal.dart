@@ -1,13 +1,15 @@
 import 'package:amberkit/amberkit.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
-class LibraryDeleteModal extends StatelessWidget {
+class BookCreateUpdateModal extends StatelessWidget {
+  final alexandrio.Book? book;
   final alexandrio.LibraryCubit library;
 
-  const LibraryDeleteModal({
+  const BookCreateUpdateModal({
     Key? key,
+    this.book,
     required this.library,
   }) : super(key: key);
 
@@ -18,7 +20,36 @@ class LibraryDeleteModal extends StatelessWidget {
         children: [
           SizedBox(height: kPadding.vertical),
           Center(
-            child: Text('Delete ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
+            child: Text(book == null ? 'Upload \$fileName to ${library.state.title}' : 'Edit ${book!.title} in ${library.state.title}', style: Theme.of(context).textTheme.headline6),
+          ),
+          SizedBox(height: kPadding.vertical),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Title',
+                filled: true,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Author',
+                filled: true,
+              ),
+            ),
+          ),
+          SizedBox(height: kPadding.vertical),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Description',
+                filled: true,
+              ),
+            ),
           ),
           SizedBox(height: kPadding.vertical),
           SizedBox(
@@ -43,7 +74,7 @@ class LibraryDeleteModal extends StatelessWidget {
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: kPadding.vertical * 1.25),
-                      child: Center(child: Text('Delete', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold))),
+                      child: Center(child: Text('Confirm', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold))),
                     ),
                   ),
                 ),

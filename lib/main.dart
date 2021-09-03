@@ -20,7 +20,7 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => alexandrio.ClientBloc()),
-        BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'red', mode: ThemeMode.dark)),
+        BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
         BlocProvider(create: (context) => DownloadManager()),
       ],
       child: App(),

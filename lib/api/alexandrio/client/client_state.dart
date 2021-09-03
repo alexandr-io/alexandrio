@@ -1,3 +1,4 @@
+import 'package:alexandrio/api/alexandrio/data/libraries_cubit.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ClientState extends Equatable {

@@ -9,7 +9,7 @@ import 'library_create_update_modal.dart';
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
 class BookModal extends StatelessWidget {
-  final alexandrio.Book book;
+  final alexandrio.BookCubit book;
   final alexandrio.LibraryCubit library;
 
   const BookModal({
@@ -24,11 +24,23 @@ class BookModal extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: kPadding.vertical),
-          Text(book.title, style: Theme.of(context).textTheme.headline6),
-          if (book.author != null) Text('by ${book.author}', style: Theme.of(context).textTheme.subtitle1),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: Text(book.state.title, style: Theme.of(context).textTheme.headline6),
+          ),
+          if (book.state.author != null)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+              child: Text('by ${book.state.author}', style: Theme.of(context).textTheme.subtitle1),
+            ),
           SizedBox(height: kPadding.vertical),
-          if (book.description != null) Text(book.description!, style: Theme.of(context).textTheme.subtitle2, textAlign: TextAlign.left),
-          SizedBox(height: kPadding.vertical),
+          if (book.state.description != null) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+              child: Text(book.state.description!, style: Theme.of(context).textTheme.subtitle2, textAlign: TextAlign.left),
+            ),
+            SizedBox(height: kPadding.vertical),
+          ],
           Tile(
             leading: Icon(Icons.book),
             title: 'Read',

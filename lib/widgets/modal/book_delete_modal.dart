@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
 class BookDeleteModal extends StatelessWidget {
-  final alexandrio.Book book;
+  final alexandrio.BookCubit book;
   final alexandrio.LibraryCubit library;
 
   const BookDeleteModal({
@@ -20,8 +20,9 @@ class BookDeleteModal extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: kPadding.vertical),
-          Center(
-            child: Text('Delete ${book.title} from ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+            child: Text('Delete ${book.state.title} from ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
           ),
           SizedBox(height: kPadding.vertical),
           SizedBox(

@@ -17,7 +17,8 @@ class LibraryDeleteModal extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: kPadding.vertical),
-          Center(
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
             child: Text('Delete ${library.state.title}?', style: Theme.of(context).textTheme.headline6),
           ),
           SizedBox(height: kPadding.vertical),

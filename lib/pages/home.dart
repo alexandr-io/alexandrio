@@ -107,7 +107,7 @@ class LibraryDisplay extends StatelessWidget {
                 ),
               ),
             ),
-            BlocBuilder<alexandrio.BooksCubit, List<alexandrio.Book>?>(
+            BlocBuilder<alexandrio.BooksCubit, List<alexandrio.BookCubit>?>(
               bloc: library.books,
               builder: (context, state) {
                 return SizedBox(
@@ -152,7 +152,7 @@ class LibraryDisplay extends StatelessWidget {
 }
 
 class BookWidget extends StatelessWidget {
-  final alexandrio.Book book;
+  final alexandrio.BookCubit book;
   final alexandrio.LibraryCubit library;
 
   const BookWidget({
@@ -163,23 +163,26 @@ class BookWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: kPadding * 0.5,
-      child: AspectRatio(
-        aspectRatio: 10.0 / 16.0,
-        child: Material(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: kBorderRadiusCircular,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () {
-              BottomModal.show(context: context, child: BookModal(book: book, library: library));
-            },
-            onLongPress: () {
-              BottomModal.show(context: context, child: BookCreateUpdateModal(book: book, library: library));
-            },
-            child: Center(
-              child: Text(book.title),
+    return BlocBuilder<alexandrio.BookCubit, alexandrio.Book>(
+      bloc: book,
+      builder: (context, state) => Padding(
+        padding: kPadding * 0.5,
+        child: AspectRatio(
+          aspectRatio: 10.0 / 16.0,
+          child: Material(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: kBorderRadiusCircular,
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {
+                BottomModal.show(context: context, child: BookModal(book: book, library: library));
+              },
+              onLongPress: () {
+                BottomModal.show(context: context, child: BookCreateUpdateModal(book: book, library: library));
+              },
+              child: Center(
+                child: Text(state.title),
+              ),
             ),
           ),
         ),

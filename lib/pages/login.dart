@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:alexandrio/api/alexandrio/alexandrio.dart' as alexandrio;
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
+
+import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
 class LoginPage extends StatefulWidget {
   @override

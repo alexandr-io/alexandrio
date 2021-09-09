@@ -16,10 +16,15 @@ dependencies:
     path: ../../williambulin/amberkit
   dart_downloader:
     git: https://github.com/williambulin/dart_downloader.git
+  flutter_pdf_parser:
+    git: https://github.com/alexandr-io/flutter_pdf_parser
+  # flutter_epub_reader:
+  #   git: https://github.com/alexandr-io/flutter_epub_reader
 
   collection: ^1.15.0
   version: ^2.0.0
-
+  file_picker_cross: ^4.4.2
+      
   # url_launcher: ^6.0.6
   # webview_flutter: ^2.0.8
   # file_picker: ^3.0.2+2

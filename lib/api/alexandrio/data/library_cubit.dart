@@ -1,8 +1,6 @@
 import 'package:amberkit/amberkit.dart';
-import 'package:http/http.dart' as http;
 
 import '../alexandrio.dart';
-import 'book.dart';
 import 'books_cubit.dart';
 import 'library.dart';
 

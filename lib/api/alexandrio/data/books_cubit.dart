@@ -15,6 +15,20 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
     refresh();
   }
 
+  void add(Book book) {
+    emit([
+      ...?state,
+      BookCubit(book),
+    ]);
+  }
+
+  void delete(BookCubit book) {
+    emit([
+      for (var entry in state ?? [])
+        if (entry != book) entry,
+    ]);
+  }
+
   Future<void> refresh() async {
     var state = client.state as ClientConnected;
 
@@ -30,15 +44,20 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
     var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
     print(jsonResponse);
 
-    emit([
-      for (var book in jsonResponse)
-        BookCubit(
-          Book(
-            title: book['Title'],
-            author: book['Author']?.isEmpty ? null : book['Author'],
-            description: book['Description']?.isEmpty ? null : book['Description'],
+    if (jsonResponse == null) {
+      emit([]);
+    } else {
+      emit([
+        for (var book in jsonResponse)
+          BookCubit(
+            Book(
+              id: book['id'],
+              title: book['Title'],
+              author: book['Author']?.isEmpty ? null : book['Author'],
+              description: book['Description']?.isEmpty ? null : book['Description'],
+            ),
           ),
-        ),
-    ]);
+      ]);
+    }
   }
 }

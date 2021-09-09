@@ -8,19 +8,32 @@ import 'library.dart';
 
 class LibrariesCubit extends Cubit<List<LibraryCubit>?> {
   final ClientBloc client;
+  final String token;
 
-  LibrariesCubit(this.client) : super(null) {
+  LibrariesCubit(this.client, this.token) : super(null) {
     refresh();
   }
 
-  Future<void> refresh() async {
-    var state = client.state as ClientConnected;
+  void add(Library library) {
+    emit([
+      ...?state,
+      LibraryCubit(client, library),
+    ]);
+  }
 
+  void delete(LibraryCubit library) {
+    emit([
+      for (var entry in state ?? [])
+        if (entry != library) entry,
+    ]);
+  }
+
+  Future<void> refresh() async {
     var response = await http.get(
       Uri.parse('https://library.alexandrio.cloud/libraries'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${state.token}',
+        'Authorization': 'Bearer $token',
       },
     );
     print(response.body);

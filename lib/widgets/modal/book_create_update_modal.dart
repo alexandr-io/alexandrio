@@ -1,16 +1,26 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http;
+
 class BookCreateUpdateModal extends StatefulWidget {
+  final alexandrio.ClientBloc client;
   final alexandrio.BookCubit? book;
   final alexandrio.LibraryCubit library;
+  final Uint8List? bytes;
 
   const BookCreateUpdateModal({
     Key? key,
+    required this.client,
     this.book,
     required this.library,
+    this.bytes,
   }) : super(key: key);
 
   @override
@@ -99,13 +109,55 @@ class _BookCreateUpdateModalState extends State<BookCreateUpdateModal> {
                 Container(height: kPadding.vertical * 2.0, width: 1.0, color: Theme.of(context).dividerColor),
                 Expanded(
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       Navigator.of(context).pop();
-                      widget.book?.emit(alexandrio.Book(
-                        title: titleController.text,
-                        author: authorController.text,
-                        description: descriptionController.text,
-                      ));
+                      if (widget.book != null) {
+                        widget.book!.emit(alexandrio.Book(
+                          id: widget.book!.state.id,
+                          title: titleController.text,
+                          author: authorController.text,
+                          description: descriptionController.text,
+                        ));
+                      } else if (widget.bytes != null) {
+                        // bytes
+                        var clientState = widget.client.state as alexandrio.ClientConnected;
+                        var response = await http.post(
+                          Uri.parse('https://library.alexandrio.cloud/library/${widget.library.state.id}/book'),
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ${clientState.token}',
+                          },
+                          body: jsonEncode({
+                            'title': titleController.text,
+                            'author': authorController.text,
+                            'description': descriptionController.text,
+                          }),
+                        );
+                        var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+                        var request = http.MultipartRequest(
+                          'POST',
+                          Uri.parse('https://media.alexandrio.cloud/book/upload'),
+                        );
+                        request.files.add(
+                          http.MultipartFile.fromBytes(
+                            'book',
+                            widget.bytes!,
+                            filename: 'file.epub',
+                            contentType: http.MediaType.parse('application/epub'),
+                          ),
+                        );
+                        request.fields['book_id'] = jsonResponse['id'];
+                        request.fields['library_id'] = widget.library.state.id;
+                        request.headers['Authorization'] = 'Bearer ${clientState.token}';
+                        var res = await request.send();
+                        print(res);
+
+                        await widget.library.books.refresh();
+                        // if (res.statusCode == 204) {
+                        // } else {
+                        // }
+                      }
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: kPadding.vertical * 1.25),

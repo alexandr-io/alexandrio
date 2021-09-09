@@ -1,4 +1,5 @@
 import 'package:amberkit/amberkit.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,12 +16,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late alexandrio.ClientBloc client;
-  late alexandrio.LibrariesCubit libraries;
 
   @override
   void initState() {
     client = BlocProvider.of<alexandrio.ClientBloc>(context);
-    libraries = alexandrio.LibrariesCubit(client);
     client.stream.listen((event) {
       if (event is alexandrio.ClientDisconnected) Navigator.of(context).pushReplacementNamed('/login');
     });
@@ -31,46 +30,60 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            BottomModal.show(context: context, child: LibraryCreateUpdateModal());
+            BottomModal.show(context: context, child: LibraryCreateUpdateModal(client: client));
           },
           child: Icon(Icons.add),
         ),
-        body: BlocBuilder<alexandrio.LibrariesCubit, List<alexandrio.LibraryCubit>?>(
-          bloc: libraries,
+        body: BlocBuilder<alexandrio.ClientBloc, alexandrio.ClientState>(
           builder: (context, state) {
-            return ListView(
-              children: [
-                Container(
-                  height: kPadding.vertical * 4.0,
-                  child: Row(
-                    children: [
-                      SizedBox(width: kPadding.horizontal),
-                      Text('Welcome, \$username!', style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(Icons.logout),
-                        onPressed: () {
-                          BlocProvider.of<alexandrio.ClientBloc>(context).add(alexandrio.ClientDisconnect());
-                        },
-                      ),
-                      SizedBox(width: kPadding.horizontal),
-                    ],
-                  ),
-                ),
-                if (state != null)
-                  for (var library in state) LibraryDisplay(library: library),
-              ],
-            );
+            if (state is alexandrio.ClientConnected) {
+              return BlocBuilder<alexandrio.LibrariesCubit, List<alexandrio.LibraryCubit>?>(
+                bloc: state.libraries,
+                builder: (context, state) {
+                  return RefreshIndicator(
+                    onRefresh: () {
+                      return (state as alexandrio.ClientConnected).libraries.refresh();
+                    },
+                    child: ListView(
+                      children: [
+                        Container(
+                          height: kPadding.vertical * 4.0,
+                          child: Row(
+                            children: [
+                              SizedBox(width: kPadding.horizontal),
+                              Text('Welcome, \$username!', style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
+                              Spacer(),
+                              IconButton(
+                                icon: Icon(Icons.logout),
+                                onPressed: () {
+                                  client.add(alexandrio.ClientDisconnect());
+                                },
+                              ),
+                              SizedBox(width: kPadding.horizontal),
+                            ],
+                          ),
+                        ),
+                        if (state != null)
+                          for (var library in state) LibraryDisplay(client: client, library: library),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }
+            return CircularProgressIndicator.adaptive();
           },
         ),
       );
 }
 
 class LibraryDisplay extends StatelessWidget {
+  final alexandrio.ClientBloc client;
   final alexandrio.LibraryCubit library;
 
   const LibraryDisplay({
     Key? key,
+    required this.client,
     required this.library,
   }) : super(key: key);
 
@@ -87,11 +100,11 @@ class LibraryDisplay extends StatelessWidget {
               onTap: () {
                 BottomModal.show(
                   context: context,
-                  child: LibraryModal(library: library),
+                  child: LibraryModal(client: client, library: library),
                 );
               },
               onLongPress: () {
-                BottomModal.show(context: context, child: LibraryCreateUpdateModal(library: library));
+                BottomModal.show(context: context, child: LibraryCreateUpdateModal(client: client, library: library));
               },
               child: Padding(
                 padding: EdgeInsets.all(kPadding.horizontal / 3.0) + EdgeInsets.symmetric(horizontal: kPadding.horizontal / 3.0),
@@ -122,7 +135,7 @@ class LibraryDisplay extends StatelessWidget {
                           child: Center(child: CircularProgressIndicator.adaptive()),
                         ),
                       if (state != null) ...[
-                        for (var book in state) BookWidget(book: book, library: library),
+                        for (var book in state) BookWidget(client: client, book: book, library: library),
                       ],
                       Padding(
                         padding: kPadding * 0.5,
@@ -132,8 +145,12 @@ class LibraryDisplay extends StatelessWidget {
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: kBorderRadiusCircular)),
                             ),
-                            onPressed: () {
-                              BottomModal.show(context: context, child: BookCreateUpdateModal(library: library));
+                            onPressed: () async {
+                              var file = await FilePickerCross.importFromStorage(
+                                type: FileTypeCross.custom,
+                                fileExtension: 'pdf, epub',
+                              );
+                              await BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, bytes: file.toUint8List(), library: library));
                             },
                             child: Icon(Icons.add),
                           ),
@@ -152,11 +169,13 @@ class LibraryDisplay extends StatelessWidget {
 }
 
 class BookWidget extends StatelessWidget {
+  final alexandrio.ClientBloc client;
   final alexandrio.BookCubit book;
   final alexandrio.LibraryCubit library;
 
   const BookWidget({
     Key? key,
+    required this.client,
     required this.book,
     required this.library,
   }) : super(key: key);
@@ -175,10 +194,10 @@ class BookWidget extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () {
-                BottomModal.show(context: context, child: BookModal(book: book, library: library));
+                BottomModal.show(context: context, child: BookModal(client: client, book: book, library: library));
               },
               onLongPress: () {
-                BottomModal.show(context: context, child: BookCreateUpdateModal(book: book, library: library));
+                BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, book: book, library: library));
               },
               child: Center(
                 child: Text(state.title),

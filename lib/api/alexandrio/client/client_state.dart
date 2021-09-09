@@ -1,6 +1,8 @@
 import 'package:alexandrio/api/alexandrio/data/libraries_cubit.dart';
 import 'package:equatable/equatable.dart';
 
+import 'client_bloc.dart';
+
 abstract class ClientState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -25,12 +27,16 @@ class ClientConnected extends ClientState {
   final String login;
   final String token;
   final String password;
+  late LibrariesCubit libraries;
 
   ClientConnected({
     required this.login,
     required this.token,
     required this.password,
-  });
+    required ClientBloc client,
+  }) {
+    libraries = LibrariesCubit(client, token);
+  }
 
   @override
   List<Object?> get props => [login, token, password, ...super.props];

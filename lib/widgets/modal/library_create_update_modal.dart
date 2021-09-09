@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
+import 'package:http/http.dart' as http;
+
 class LibraryCreateUpdateModal extends StatefulWidget {
+  final alexandrio.ClientBloc client;
   final alexandrio.LibraryCubit? library;
 
   const LibraryCreateUpdateModal({
     Key? key,
     this.library,
+    required this.client,
   }) : super(key: key);
 
   @override
@@ -53,17 +59,17 @@ class _LibraryCreateUpdateModalState extends State<LibraryCreateUpdateModal> {
               ),
             ),
           ),
-          SizedBox(height: kPadding.vertical),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
-            child: TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Description',
-                filled: true,
-              ),
-            ),
-          ),
+          // SizedBox(height: kPadding.vertical),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
+          //   child: TextField(
+          //     controller: descriptionController,
+          //     decoration: InputDecoration(
+          //       labelText: 'Description',
+          //       filled: true,
+          //     ),
+          //   ),
+          // ),
           SizedBox(height: kPadding.vertical),
           SizedBox(
             child: Row(
@@ -82,7 +88,8 @@ class _LibraryCreateUpdateModalState extends State<LibraryCreateUpdateModal> {
                 Container(height: kPadding.vertical * 2.0, width: 1.0, color: Theme.of(context).dividerColor),
                 Expanded(
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      var messenger = ScaffoldMessenger.of(context);
                       Navigator.of(context).pop();
                       if (widget.library != null) {
                         widget.library!.emit(alexandrio.Library(
@@ -90,6 +97,31 @@ class _LibraryCreateUpdateModalState extends State<LibraryCreateUpdateModal> {
                           title: titleController.text,
                           description: descriptionController.text,
                         ));
+                      } else {
+                        var clientState = widget.client.state as alexandrio.ClientConnected;
+                        var response = await http.post(
+                          Uri.parse('https://library.alexandrio.cloud/library'),
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ${clientState.token}',
+                          },
+                          body: jsonEncode({
+                            'name': titleController.text,
+                            'description': descriptionController.text,
+                          }),
+                        );
+                        if (response.statusCode != 201) {
+                          messenger.showSnackBar(SnackBar(
+                            content: Text('Couldn\'t create library'),
+                          ));
+                        } else {
+                          var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+                          clientState.libraries.add(alexandrio.Library(
+                            id: jsonResponse['id'],
+                            title: jsonResponse['name'],
+                            description: jsonResponse['description'],
+                          ));
+                        }
                       }
                     },
                     child: Padding(

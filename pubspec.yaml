@@ -17,9 +17,11 @@ dependencies:
   dart_downloader:
     git: https://github.com/williambulin/dart_downloader.git
   flutter_pdf_parser:
-    git: https://github.com/alexandr-io/flutter_pdf_parser
-  # flutter_epub_reader:
-  #   git: https://github.com/alexandr-io/flutter_epub_reader
+    # git: https://github.com/alexandr-io/flutter_pdf_parser
+    path: ../flutter_pdf_parser
+  flutter_epub_reader:
+    # git: https://github.com/alexandr-io/flutter_epub_reader
+    path: ../flutter_epub_reader
 
   collection: ^1.15.0
   version: ^2.0.0

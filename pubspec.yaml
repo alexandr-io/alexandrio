@@ -13,7 +13,8 @@ dependencies:
   font_awesome_flutter: ^9.1.0
 
   amberkit:
-    path: ../../williambulin/amberkit
+    git: https://github.com/williambulin/amberkit.git
+    # path: ../../williambulin/amberkit
   dart_downloader:
     git: https://github.com/williambulin/dart_downloader.git
   flutter_pdf_parser:

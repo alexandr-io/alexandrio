@@ -1,6 +1,7 @@
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_epub_reader/flutter_epub_reader.dart';
+import 'package:flutter_pdf_parser/flutter_pdf_parser.dart';
 import 'package:http/http.dart' as http;
 
 import '/widgets/modal/book_create_update_modal.dart';
@@ -65,6 +66,16 @@ class BookModal extends StatelessWidget {
               switch (contentType) {
                 case 'application/pdf':
                   print('pdf detected');
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => PDFBook(
+                        token: realState.token,
+                        id: book.state.id,
+                        bytes: response.bodyBytes,
+                        title: book.state.title,
+                      ),
+                    ),
+                  );
                   break;
                 case 'application/zip':
                   print('epub detected');

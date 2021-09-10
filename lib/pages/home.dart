@@ -35,14 +35,14 @@ class _HomePageState extends State<HomePage> {
           child: Icon(Icons.add),
         ),
         body: BlocBuilder<alexandrio.ClientBloc, alexandrio.ClientState>(
-          builder: (context, state) {
-            if (state is alexandrio.ClientConnected) {
+          builder: (context, state2) {
+            if (state2 is alexandrio.ClientConnected) {
               return BlocBuilder<alexandrio.LibrariesCubit, List<alexandrio.LibraryCubit>?>(
-                bloc: state.libraries,
+                bloc: state2.libraries,
                 builder: (context, state) {
                   return RefreshIndicator(
                     onRefresh: () {
-                      return (state as alexandrio.ClientConnected).libraries.refresh();
+                      return (state2 as alexandrio.ClientConnected).libraries.refresh();
                     },
                     child: ListView(
                       children: [

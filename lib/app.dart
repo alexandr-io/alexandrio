@@ -1,3 +1,4 @@
+import 'package:alexandrio/pages/offline.dart';
 import 'package:alexandrio/pages/settings.dart';
 import 'package:amberkit/amberkit.dart';
 
@@ -52,6 +53,7 @@ class App extends StatelessWidget {
                 '/update': () => UpdatePage(),
                 '/login': () => LoginPage(),
                 '/settings': () => SettingsPage(),
+                '/offline': () => OfflinePage(),
                 '/': () => HomePage(),
               },
             );

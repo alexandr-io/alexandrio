@@ -6,6 +6,7 @@ import 'package:flutter_epub_reader/flutter_epub_reader.dart';
 import 'package:flutter_pdf_parser/flutter_pdf_parser.dart';
 import 'package:http/http.dart' as http;
 
+import '../../offlinebook.dart';
 import '/widgets/modal/book_create_update_modal.dart';
 import '/widgets/modal/book_delete_modal.dart';
 
@@ -66,7 +67,15 @@ class BookModal extends StatelessWidget {
               }
               var contentType = response.headers['content-type'];
               var booksBox = await Hive.openBox('Books');
-              // booksBox.
+              await booksBox.put(
+                book.state.id,
+                OfflineBook(
+                  title: book.state.title,
+                  id: book.state.id,
+                  libraryId: library.state.id,
+                  bytes: response.bodyBytes,
+                ),
+              );
               switch (contentType) {
                 case 'application/pdf':
                   print('pdf detected');

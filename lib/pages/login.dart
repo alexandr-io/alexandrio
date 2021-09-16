@@ -209,6 +209,21 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(height: kPadding.vertical),
                           CircularProgressIndicator.adaptive(),
                         ],
+                        // SizedBox(height: kPadding.vertical),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton(
+                            style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(0.0),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: kBorderRadiusCircular)),
+                              padding: MaterialStateProperty.all(kPadding * 2.0),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/offline');
+                            },
+                            child: Text('Offline'),
+                          ),
+                        ),
                       ],
                     ),
                   ),

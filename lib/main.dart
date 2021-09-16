@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:alexandrio/offlinebook.dart';
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ import 'api/alexandrio/alexandrio.dart' as alexandrio;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+
+  Hive.registerAdapter(OfflineBookAdapter());
 
   if (Platform.isIOS || Platform.isAndroid) {
     await Hive.initFlutter();

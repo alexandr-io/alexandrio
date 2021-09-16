@@ -41,6 +41,7 @@ jobs:
         if: matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
         with:
           repository: alexandr-io/signingkeys
+          ref: 'master'
           token: ${{secrets.GHKEY}}
           path: signingkeys
 

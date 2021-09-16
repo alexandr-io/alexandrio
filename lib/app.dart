@@ -1,7 +1,10 @@
+import 'package:alexandrio/pages/settings.dart';
 import 'package:amberkit/amberkit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'dart:ui';
 
@@ -23,6 +26,17 @@ class App extends StatelessWidget {
           if (state is ThemeLoaded) {
             return RouteManager(
               builder: (context, routeManager) => MaterialApp(
+                localizationsDelegates: [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  Locale('en'),
+                  Locale('fr'),
+                ],
+                locale: Locale('fr'),
                 title: 'Alexandrio',
                 onGenerateTitle: (context) => 'Alexandrio',
                 initialRoute: initialRoute ?? routeManager.initialRoute,
@@ -37,6 +51,7 @@ class App extends StatelessWidget {
               routes: {
                 '/update': () => UpdatePage(),
                 '/login': () => LoginPage(),
+                '/settings': () => SettingsPage(),
                 '/': () => HomePage(),
               },
             );

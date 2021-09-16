@@ -15,6 +15,18 @@ class ClientConnect extends ClientEvent {
   List<Object?> get props => [login, password, ...super.props];
 }
 
+class ClientRegister extends ClientEvent {
+  final String login;
+  final String password;
+  final String email;
+  final String invite;
+
+  ClientRegister(this.login, this.password, this.email, this.invite);
+
+  @override
+  List<Object?> get props => [login, password, email, invite, ...super.props];
+}
+
 class ClientDisconnect extends ClientEvent {}
 
 class ClientError extends ClientEvent {

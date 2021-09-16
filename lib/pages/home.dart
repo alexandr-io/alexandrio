@@ -1,3 +1,4 @@
+import 'package:alexandrio/widgets/modal/update_modal.dart';
 import 'package:amberkit/amberkit.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late alexandrio.ClientBloc client;
+  final UpdateProvider updateProvider = UpdateProvider(owner: 'alexandr-io', repositoryName: 'alexandrio');
 
   @override
   void initState() {
@@ -23,11 +25,44 @@ class _HomePageState extends State<HomePage> {
     client.stream.listen((event) {
       if (event is alexandrio.ClientDisconnected) Navigator.of(context).pushReplacementNamed('/login');
     });
+    updateProvider.getLatestRelease().then((release) {
+      BottomModal.show(
+        context: context,
+        child: UpdateModal(updateProvider: updateProvider, updateRelease: release),
+      );
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text('Alexandrio'),
+          centerTitle: true,
+          // foregroundColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.feedback),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/feedback');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/settings');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () {
+                client.add(alexandrio.ClientDisconnect());
+              },
+            ),
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             BottomModal.show(context: context, child: LibraryCreateUpdateModal(client: client));
@@ -42,27 +77,27 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, state) {
                   return RefreshIndicator(
                     onRefresh: () {
-                      return (state2 as alexandrio.ClientConnected).libraries.refresh();
+                      return state2.libraries.refresh();
                     },
                     child: ListView(
                       children: [
-                        Container(
-                          height: kPadding.vertical * 4.0,
-                          child: Row(
-                            children: [
-                              SizedBox(width: kPadding.horizontal),
-                              Text('Welcome, \$username!', style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
-                              Spacer(),
-                              IconButton(
-                                icon: Icon(Icons.logout),
-                                onPressed: () {
-                                  client.add(alexandrio.ClientDisconnect());
-                                },
-                              ),
-                              SizedBox(width: kPadding.horizontal),
-                            ],
-                          ),
-                        ),
+                        // Container(
+                        //   height: kPadding.vertical * 4.0,
+                        //   child: Row(
+                        //     children: [
+                        //       SizedBox(width: kPadding.horizontal),
+                        //       Text('Welcome, \$username!', style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
+                        //       Spacer(),
+                        //       IconButton(
+                        //         icon: Icon(Icons.logout),
+                        //         onPressed: () {
+                        //           client.add(alexandrio.ClientDisconnect());
+                        //         },
+                        //       ),
+                        //       SizedBox(width: kPadding.horizontal),
+                        //     ],
+                        //   ),
+                        // ),
                         if (state != null)
                           for (var library in state) LibraryDisplay(client: client, library: library),
                       ],
@@ -189,7 +224,8 @@ class BookWidget extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: 10.0 / 16.0,
           child: Material(
-            color: Theme.of(context).colorScheme.primary,
+            elevation: 1.0,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: kBorderRadiusCircular,
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -199,8 +235,14 @@ class BookWidget extends StatelessWidget {
               onLongPress: () {
                 BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, book: book, library: library));
               },
-              child: Center(
-                child: Text(state.title),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(
+                    state.title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
           ),

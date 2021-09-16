@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,8 +15,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
 
-  await Hive.initFlutter();
+  if (Platform.isIOS || Platform.isAndroid) {
+    await Hive.initFlutter();
+  } else {
+    Hive.init('.');
+  }
+
   var themeBox = await Hive.openBox('Theme');
+  var booksBox = await Hive.openBox('Books');
 
   runApp(
     MultiBlocProvider(

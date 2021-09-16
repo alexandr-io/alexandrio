@@ -12,18 +12,30 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
   Timer? timer;
 
   ClientBloc() : super(ClientDisconnected()) {
-    // TODO: Reconnect here if credentials exists
+    timer = Timer.periodic(Duration(minutes: 1), (timer) async {
+      if (state is ClientConnected) {
+        var realState = state as ClientConnected;
+
+        var response = await http.post(
+          Uri.parse('https://auth.alexandrio.cloud/login'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'login': realState.login,
+            'password': realState.password,
+          }),
+        );
+        var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        print(jsonResponse);
+
+        emit(ClientConnected(login: realState.login, token: jsonResponse['auth_token'], password: realState.password, client: this));
+      }
+    });
   }
 
   @override
-  void onChange(Change<ClientState> change) {
-    if (change.nextState is ClientConnected) {
-      var realState = change.nextState as ClientConnected;
-      realState.token;
-      timer = Timer.periodic(Duration(minutes: 5), (timer) {
-        add(ClientConnect(realState.login, realState.password));
-      });
-    } else {}
+  void onChange(Change<ClientState> change) async {
     super.onChange(change);
   }
 
@@ -32,24 +44,51 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     if (event is ClientConnect) {
       yield ClientConnecting(login: event.login, password: event.password);
 
-      // await Future.delayed(Duration(seconds: 2));
-      var response = await http.post(
-        Uri.parse('https://auth.alexandrio.cloud/login'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'login': event.login,
-          'password': event.password,
-        }),
-      );
-      var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      print(jsonResponse);
+      try {
+        var response = await http.post(
+          Uri.parse('https://auth.alexandrio.cloud/login'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'login': event.login,
+            'password': event.password,
+          }),
+        );
+        var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        print(jsonResponse);
 
-      yield ClientConnected(login: event.login, token: jsonResponse['auth_token'], password: event.password, client: this);
+        yield ClientConnected(login: event.login, token: jsonResponse['auth_token'], password: event.password, client: this);
+      } catch (e) {
+        yield ClientErrored(error: 'Couldn\'t login to account, please check your input fields');
+        // yield ClientErrored(error: '$e');
+      }
     } else if (event is ClientDisconnect) {
-      await Future.delayed(Duration(seconds: 2));
       yield ClientDisconnected();
+    } else if (event is ClientRegister) {
+      try {
+        var response = await http.post(
+          Uri.parse('https://auth.alexandrio.cloud/register'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            // 'login': event.login,
+            // 'password': event.password,
+            'invitation_token': event.invite,
+            'username': event.login,
+            'password': event.password,
+            'confirm_password': event.password,
+            'email': event.email,
+          }),
+        );
+        var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        print(jsonResponse);
+
+        yield ClientConnected(login: event.login, token: jsonResponse['auth_token'], password: event.password, client: this);
+      } catch (e) {
+        yield ClientErrored(error: 'Couldn\'t register account, please check your input fields');
+      }
     }
   }
 }

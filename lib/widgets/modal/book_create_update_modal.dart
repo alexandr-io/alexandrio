@@ -56,7 +56,7 @@ class _BookCreateUpdateModalState extends State<BookCreateUpdateModal> {
           SizedBox(height: kPadding.vertical),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: kPadding.horizontal),
-            child: Text(widget.book == null ? 'Upload \$fileName to ${widget.library.state.title}' : 'Edit ${widget.book!.state.title} in ${widget.library.state.title}', style: Theme.of(context).textTheme.headline6),
+            child: Text(widget.book == null ? 'Upload to ${widget.library.state.title}' : 'Edit ${widget.book!.state.title} in ${widget.library.state.title}', style: Theme.of(context).textTheme.headline6),
           ),
           SizedBox(height: kPadding.vertical),
           Padding(

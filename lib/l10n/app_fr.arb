@@ -1,0 +1,7 @@
+{
+    "login": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "registerAnAccount": "Créer un compte",
+    "forgotPassword": "Mot de passe oublié?"
+}

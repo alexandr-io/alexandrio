@@ -90,14 +90,16 @@ class BookModal extends StatelessWidget {
                       'Authorization': 'Bearer ${realState.token}',
                     },
                   );
+                  var progress = '';
                   if (getProgression.statusCode != 200) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text('Couldn\'t get progress'),
                       behavior: SnackBarBehavior.floating,
                     ));
+                  } else {
+                    var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
+                    progress = json['progress'];
                   }
-                  var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
-                  var progress = json['progress'];
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => EPUBBook(

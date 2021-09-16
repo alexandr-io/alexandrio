@@ -65,6 +65,8 @@ class BookModal extends StatelessWidget {
                 ));
               }
               var contentType = response.headers['content-type'];
+              var booksBox = await Hive.openBox('Books');
+              // booksBox.
               switch (contentType) {
                 case 'application/pdf':
                   print('pdf detected');
@@ -86,7 +88,7 @@ class BookModal extends StatelessWidget {
                     headers: {
                       'Content-Type': 'application/json',
                       'Authorization': 'Bearer ${realState.token}',
-                    }
+                    },
                   );
                   if (getProgression.statusCode != 200) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -17,8 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool register = false;
-  TextEditingController loginController = TextEditingController(text: 'BenjaminPraud');
-  TextEditingController passwordController = TextEditingController(text: 'test');
+  TextEditingController loginController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController inviteController = TextEditingController();
   late StreamSubscription sub;

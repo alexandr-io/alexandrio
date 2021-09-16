@@ -30,34 +30,41 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
   }
 
   Future<void> refresh() async {
-    var state = client.state as ClientConnected;
+    try {
+      var state = client.state as ClientConnected;
 
-    var response = await http.get(
-      Uri.parse('https://library.alexandrio.cloud/library/${library.id}/books'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${state.token}',
-      },
-    );
+      var response = await http.get(
+        Uri.parse('https://library.alexandrio.cloud/library/${library.id}/books'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${state.token}',
+        },
+      );
 
-    print(response.body);
-    var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-    print(jsonResponse);
+      print(response.body);
+      var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      print(jsonResponse);
 
-    if (jsonResponse == null) {
-      emit([]);
-    } else {
-      emit([
-        for (var book in jsonResponse)
-          BookCubit(
-            Book(
-              id: book['id'],
-              title: book['Title'],
-              author: book['Author']?.isEmpty ? null : book['Author'],
-              description: book['Description']?.isEmpty ? null : book['Description'],
+      if (jsonResponse == null) {
+        emit([]);
+      } else {
+        emit([
+          for (var book in jsonResponse)
+            BookCubit(
+              Book(
+                id: book['id'],
+                title: book['Title'],
+                author: book['Author']?.isEmpty ? null : book['Author'],
+                description: book['Description']?.isEmpty ? null : book['Description'],
+                // title: book['title'],
+                // author: book['author'],
+                // description: book['description'],
+              ),
             ),
-          ),
-      ]);
+        ]);
+      }
+    } catch (e) {
+      emit([]);
     }
   }
 }

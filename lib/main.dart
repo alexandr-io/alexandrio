@@ -23,11 +23,12 @@ Future<void> main() async {
 
   var themeBox = await Hive.openBox('Theme');
   var booksBox = await Hive.openBox('Books');
+  var accountBox = await Hive.openBox('Account');
 
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => alexandrio.ClientBloc()),
+        BlocProvider(create: (context) => alexandrio.ClientBloc(accountBox)),
         BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
         BlocProvider(create: (context) => DownloadManager()),
       ],

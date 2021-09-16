@@ -10,8 +10,15 @@ import 'client_state.dart';
 
 class ClientBloc extends Bloc<ClientEvent, ClientState> {
   Timer? timer;
+  final Box accountBox;
 
-  ClientBloc() : super(ClientDisconnected()) {
+  ClientBloc(this.accountBox) : super(ClientDisconnected()) {
+    var login = accountBox.get('login');
+    var password = accountBox.get('password');
+    if (login != null && password != null) {
+      add(ClientConnect(login, password));
+    }
+
     timer = Timer.periodic(Duration(minutes: 1), (timer) async {
       if (state is ClientConnected) {
         var realState = state as ClientConnected;
@@ -59,11 +66,15 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
         print(jsonResponse);
 
         yield ClientConnected(login: event.login, token: jsonResponse['auth_token'], password: event.password, client: this);
+
+        await accountBox.put('login', event.login);
+        await accountBox.put('password', event.password);
       } catch (e) {
         yield ClientErrored(error: 'Couldn\'t login to account, please check your input fields');
         // yield ClientErrored(error: '$e');
       }
     } else if (event is ClientDisconnect) {
+      await accountBox.clear();
       yield ClientDisconnected();
     } else if (event is ClientRegister) {
       try {

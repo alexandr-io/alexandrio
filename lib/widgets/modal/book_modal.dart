@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_epub_reader/flutter_epub_reader.dart';
@@ -79,13 +81,30 @@ class BookModal extends StatelessWidget {
                   break;
                 case 'application/zip':
                   print('epub detected');
+                  var getProgression = await http.get(
+                    Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ${realState.token}',
+                    }
+                  );
+                  if (getProgression.statusCode != 200) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Couldn\'t get progress'),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  }
+                  var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
+                  var progress = json['progress'];
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => EPUBBook(
                         token: realState.token,
-                        id: book.state.id,
+                        book: book.state.id,
+                        library: library.state.id,
                         bytes: response.bodyBytes,
                         title: book.state.title,
+                        progress: progress,
                       ),
                     ),
                   );

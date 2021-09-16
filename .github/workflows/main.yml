@@ -44,6 +44,18 @@ jobs:
           token: ${{secrets.GHKEY}}
           path: signingkeys
 
+      - name: Checking out epub library source code
+        uses: actions/checkout@v2
+        with:
+          repository: alexandr-io/flutter_epub_reader
+          path: flutter_epub_reader
+
+      - name: Checking out pdf library source code
+        uses: actions/checkout@v2
+        with:
+          repository: alexandr-io/flutter_pdf_parser
+          path: flutter_pdf_parser
+
       - name: Checking out Alexandrio source code
         uses: actions/checkout@v2
         with:

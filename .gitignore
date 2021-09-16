@@ -16,3 +16,4 @@
 !/analysis_options.yaml
 !/pubspec.yaml
 !/.gitignore
+!/l10n.yaml

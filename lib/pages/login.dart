@@ -60,7 +60,12 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Padding(
                           padding: kPadding,
-                          child: Icon(Icons.book, size: 128.0),
+                          child: Image.network(
+                            'https://i.imgur.com/ZkORURe.png',
+                            height: 128.0,
+                            filterQuality: FilterQuality.high,
+                            isAntiAlias: true,
+                          ), //Icon(Icons.book, size: 128.0),
                         ),
                         SizedBox(height: kPadding.vertical),
                         if (state is alexandrio.ClientErrored) ...[

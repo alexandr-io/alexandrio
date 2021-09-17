@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:dart_downloader/DownloadManager.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'app.dart';
 import 'api/alexandrio/alexandrio.dart' as alexandrio;
@@ -28,14 +29,19 @@ Future<void> main() async {
   var booksBox = await Hive.openBox('Books');
   var accountBox = await Hive.openBox('Account');
 
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => alexandrio.ClientBloc(accountBox)),
-        BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
-        BlocProvider(create: (context) => DownloadManager()),
-      ],
-      child: App(),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://ce5c24bd75f748308af01461b9112705@sentry.chatsen.app/4';
+    },
+    appRunner: () => runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => alexandrio.ClientBloc(accountBox)),
+          BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
+          BlocProvider(create: (context) => DownloadManager()),
+        ],
+        child: App(),
+      ),
     ),
   );
 }

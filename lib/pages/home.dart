@@ -3,6 +3,8 @@ import 'package:amberkit/amberkit.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:version/version.dart';
 
 import '/widgets/modal/library_modal.dart';
 import '/widgets/modal/book_create_update_modal.dart';
@@ -25,11 +27,16 @@ class _HomePageState extends State<HomePage> {
     client.stream.listen((event) {
       if (event is alexandrio.ClientDisconnected) Navigator.of(context).pushReplacementNamed('/login');
     });
-    updateProvider.getLatestRelease().then((release) {
-      BottomModal.show(
-        context: context,
-        child: UpdateModal(updateProvider: updateProvider, updateRelease: release),
-      );
+    updateProvider.getLatestRelease().then((release) async {
+      var packageInfo = await PackageInfo.fromPlatform();
+      var releaseVersion = Version.parse(release.tagName);
+      var currentVersion = Version.parse('${packageInfo.version}+${packageInfo.buildNumber}');
+      if (currentVersion < releaseVersion) {
+        await BottomModal.show(
+          context: context,
+          child: UpdateModal(updateProvider: updateProvider, updateRelease: release),
+        );
+      }
     });
     super.initState();
   }

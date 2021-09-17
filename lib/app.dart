@@ -37,7 +37,7 @@ class App extends StatelessWidget {
                   Locale('en'),
                   Locale('fr'),
                 ],
-                locale: Locale('fr'),
+                locale: Locale('en'),
                 title: 'Alexandrio',
                 onGenerateTitle: (context) => 'Alexandrio',
                 initialRoute: initialRoute ?? routeManager.initialRoute,

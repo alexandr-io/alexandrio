@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateModal extends StatelessWidget {
   final UpdateProvider updateProvider;
@@ -44,7 +47,17 @@ class UpdateModal extends StatelessWidget {
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: kBorderRadiusCircular)),
                 padding: MaterialStateProperty.all(kPadding * 2.0),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  var file = updateRelease.files.firstWhere((element) => element.name == 'Android.apk');
+                  launch(file.url);
+                } else if (Platform.isIOS) {
+                  var file = updateRelease.files.firstWhere((element) => element.name == 'iOS.ipa');
+                  launch(file.url);
+                } else {
+                  launch('https://github.com/alexandr-io/alexandrio/releases/latest');
+                }
+              },
               child: Text('Update'),
             ),
           ],

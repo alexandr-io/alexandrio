@@ -21,7 +21,7 @@ class _OfflinePageState extends State<OfflinePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Alexandrio'),
+          title: Text('Alexandrio (Offline)'),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0.0,

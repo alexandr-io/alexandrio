@@ -71,7 +71,7 @@ jobs:
       - name: Checking out Flutter
         uses: chatsen/flutter-action@master
         with:
-          channel: "master"
+          channel: "dev"
 
       - name: Changing version number and build number to the Github Tag
         if: startsWith(github.ref, 'refs/tags/')

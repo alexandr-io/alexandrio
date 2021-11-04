@@ -12,6 +12,12 @@ import 'dart:ui';
 import 'pages/update.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
+import 'package:flutter/material.dart';
+
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {...PointerDeviceKind.values};
+}
 
 class App extends StatelessWidget {
   final String? initialRoute;
@@ -38,13 +44,16 @@ class App extends StatelessWidget {
                   Locale('fr'),
                 ],
                 locale: Locale('en'),
+                scrollBehavior: CustomScrollBehavior(),
                 title: 'Alexandrio',
                 onGenerateTitle: (context) => 'Alexandrio',
                 initialRoute: initialRoute ?? routeManager.initialRoute,
                 onGenerateInitialRoutes: routeManager.onGenerateInitialRoutes,
                 onGenerateRoute: routeManager.onGenerateRoute,
-                darkTheme: ThemeManager.buildTheme(Brightness.dark, state.colorScheme),
-                theme: ThemeManager.buildTheme(Brightness.light, state.colorScheme),
+                darkTheme:
+                    ThemeManager.buildTheme(Brightness.dark, state.colorScheme),
+                theme: ThemeManager.buildTheme(
+                    Brightness.light, state.colorScheme),
                 themeMode: state.mode,
                 debugShowCheckedModeBanner: false,
               ),

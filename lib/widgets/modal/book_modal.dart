@@ -76,6 +76,23 @@ class BookModal extends StatelessWidget {
                   bytes: response.bodyBytes,
                 ),
               );
+              var getProgression = await http.get(
+                Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ${realState.token}',
+                },
+              );
+              var progress = '';
+              if (getProgression.statusCode != 200) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Couldn\'t get progress'),
+                  behavior: SnackBarBehavior.floating,
+                ));
+              } else {
+                var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
+                progress = json['progress'];
+              }
               switch (contentType) {
                 case 'application/pdf':
                   print('pdf detected');
@@ -83,32 +100,17 @@ class BookModal extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (BuildContext context) => PDFBook(
                         token: realState.token,
-                        id: book.state.id,
+                        book: book.state.id,
+                        library: library.state.id,
                         bytes: response.bodyBytes,
                         title: book.state.title,
+                        progress: progress,
                       ),
                     ),
                   );
                   break;
                 case 'application/zip':
                   print('epub detected');
-                  var getProgression = await http.get(
-                    Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ${realState.token}',
-                    },
-                  );
-                  var progress = '';
-                  if (getProgression.statusCode != 200) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Couldn\'t get progress'),
-                      behavior: SnackBarBehavior.floating,
-                    ));
-                  } else {
-                    var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
-                    progress = json['progress'];
-                  }
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => EPUBBook(

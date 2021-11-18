@@ -1,6 +1,7 @@
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_epub_reader/flutter_epub_reader.dart';
+import 'package:flutter_pdf_parser/flutter_pdf_parser.dart';
 
 import '../offlinebook.dart';
 
@@ -38,14 +39,23 @@ class _OfflinePageState extends State<OfflinePage> {
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (BuildContext context) => EPUBBook(
-                                token: '',
-                                book: item.id,
-                                library: item.libraryId,
-                                bytes: item.bytes,
-                                title: item.title,
-                                progress: null,
-                              ),
+                              builder: (BuildContext context) => item.format == 'application/pdf'
+                                  ? PDFBook(
+                                      token: '',
+                                      book: item.id,
+                                      library: item.libraryId,
+                                      bytes: item.bytes,
+                                      title: item.title,
+                                      progress: null,
+                                    )
+                                  : EPUBBook(
+                                      token: '',
+                                      book: item.id,
+                                      library: item.libraryId,
+                                      bytes: item.bytes,
+                                      title: item.title,
+                                      progress: null,
+                                    ),
                             ),
                           );
                         },

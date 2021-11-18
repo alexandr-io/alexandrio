@@ -14,11 +14,14 @@ class OfflineBook extends HiveObject {
   final String libraryId;
   @HiveField(3)
   final Uint8List bytes;
+  @HiveField(4)
+  final String format;
 
   OfflineBook({
     required this.title,
     required this.id,
     required this.libraryId,
     required this.bytes,
+    required this.format,
   });
 }

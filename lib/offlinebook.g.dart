@@ -21,13 +21,14 @@ class OfflineBookAdapter extends TypeAdapter<OfflineBook> {
       id: fields[1] as String,
       libraryId: fields[2] as String,
       bytes: fields[3] as Uint8List,
+      format: fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, OfflineBook obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class OfflineBookAdapter extends TypeAdapter<OfflineBook> {
       ..writeByte(2)
       ..write(obj.libraryId)
       ..writeByte(3)
-      ..write(obj.bytes);
+      ..write(obj.bytes)
+      ..writeByte(4)
+      ..write(obj.format);
   }
 
   @override

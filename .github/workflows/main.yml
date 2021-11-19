@@ -166,16 +166,16 @@ jobs:
         working-directory: ./alexandrio
         run: rm -rf test
 
-      # - name: Temporarily fix generating icons for the app
-      #   working-directory: ./alexandrio
-      #   if: matrix.target == 'Android' || matrix.target == 'iOS'
-      #   run: |
-      #     ${{env.sed}} -i 's/minSdkVersion .*/minSdkVersion 21/' ./android/app/build.gradle
+      - name: Temporarily fix generating icons for the app
+        working-directory: ./alexandrio
+        if: matrix.target == 'Android' || matrix.target == 'iOS'
+        run: |
+          ${{env.sed}} -i 's/minSdkVersion .*/minSdkVersion 21/' ./android/app/build.gradle
 
-      # - name: Building the launcher icon
-      #   working-directory: ./alexandrio
-      #   if: matrix.target == 'Android' || matrix.target == 'iOS'
-      #   run: flutter pub run flutter_launcher_icons:main
+      - name: Building the launcher icon
+        working-directory: ./alexandrio
+        if: matrix.target == 'Android' || matrix.target == 'iOS'
+        run: flutter pub run flutter_launcher_icons:main
 
       - name: Build on Android
         if: matrix.target == 'Android'

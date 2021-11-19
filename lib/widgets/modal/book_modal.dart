@@ -75,6 +75,7 @@ class BookModal extends StatelessWidget {
                   id: book.state.id,
                   libraryId: library.state.id,
                   bytes: response.bodyBytes,
+                  format: contentType ?? '',
                 ),
               );
               var getProgression = await http.get(

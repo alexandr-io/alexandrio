@@ -36,6 +36,12 @@ jobs:
           brew install gnu-sed
           echo "sed=gsed" >> $GITHUB_ENV
 
+      - name: Set up Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install zip
+
       - name: Checking out sigining keys
         uses: actions/checkout@v2
         if: matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
@@ -71,7 +77,7 @@ jobs:
       - name: Checking out Flutter
         uses: chatsen/flutter-action@master
         with:
-          channel: "dev"
+          channel: "master"
 
       - name: Changing version number and build number to the Github Tag
         if: startsWith(github.ref, 'refs/tags/')
@@ -104,7 +110,7 @@ jobs:
           # Add support for drawing behind the navbar on Android 11+
           ${{env.sed}} -i "/io.flutter.embedding.android.FlutterActivity/a import android.os.Bundle\nimport android.os.Build\nimport androidx.annotation.NonNull\nimport io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode.transparent\nimport io.flutter.embedding.engine.FlutterEngine\nimport io.flutter.plugins.GeneratedPluginRegistrant" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
           ${{env.sed}} -i "/FlutterActivity()/a \ \ \ \ override fun onCreate(savedInstanceState: Bundle?) {\n\ \ \ \ \ \ \ \ super.onCreate(savedInstanceState)\n\ \ \ \ \ \ \ \ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {\n\ \ \ \ \ \ \ \ \ \ \ \ window.setDecorFitsSystemWindows(false)\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
-          
+
       - name: Add signing to the project for Android
         working-directory: ./alexandrio
         if: matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
@@ -148,10 +154,23 @@ jobs:
         run: |
           flutter config --enable-macos-desktop
           flutter create --platforms macos --org com.alexandrio .
+          # Add permissions for networking and file picker
+          ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.network.client</key>\n\ \ <true/>' macos/Runner/Release.entitlements
+          ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.files.user-selected.read-only</key>\n\ \ <true/>' macos/Runner/Release.entitlements
+          ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.network.client</key>\n\ \ <true/>' macos/Runner/DebugProfile.entitlements
+          ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.files.user-selected.read-only</key>\n\ \ <true/>' macos/Runner/DebugProfile.entitlements
+          # Change the app title
+          ${{env.sed}} -i 's/<string>$(PRODUCT_NAME)<\/string>/<string>Alexandrio<\/string>/' ./macos/Runner/Info.plist
 
       - name: Cleaning up the test directory
         working-directory: ./alexandrio
         run: rm -rf test
+
+      # - name: Temporarily fix generating icons for the app
+      #   working-directory: ./alexandrio
+      #   if: matrix.target == 'Android' || matrix.target == 'iOS'
+      #   run: |
+      #     ${{env.sed}} -i 's/minSdkVersion .*/minSdkVersion 21/' ./android/app/build.gradle
 
       # - name: Building the launcher icon
       #   working-directory: ./alexandrio
@@ -172,7 +191,7 @@ jobs:
         if: matrix.target == 'Windows'
         working-directory: ./alexandrio
         run: flutter build windows
-        
+
       - name: Build on Linux
         if: matrix.target == 'Linux'
         working-directory: ./alexandrio
@@ -192,7 +211,7 @@ jobs:
           mkdir -p release/Payload
           cp -rf ./alexandrio/build/ios/iphoneos/Runner.app ./release/Payload/Runner.app
           ditto -c -k --sequesterRsrc --keepParent ./release/Payload ./release/iOS.ipa
-      
+
       - name: Uploading iOS artifact
         if: matrix.target == 'iOS'
         uses: actions/upload-artifact@v2
@@ -202,11 +221,11 @@ jobs:
 
       - name: Uploading iOS tagged release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'iOS' && github.repository_owner == 'alexandr-io'
+        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'iOS'
         with:
           files: ./release/iOS.ipa
         env:
-          GITHUB_TOKEN: ${{secrets.GHKEY}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       # Android release
       - name: Preparing Android release
@@ -224,8 +243,77 @@ jobs:
 
       - name: Uploading Android tagged release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
+        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Android'
         with:
           files: ./release/Android.apk
         env:
-          GITHUB_TOKEN: ${{secrets.GHKEY}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      # Windows release
+      - name: Preparing Windows release
+        if: matrix.target == 'Windows'
+        run: |
+          # mkdir -p release
+          cp -rf ./alexandrio/build/windows/runner/Release ./release
+          echo "powershell Compress-Archive release/* release/Windows.zip" | powershell
+
+      - name: Uploading Windows artifact
+        if: matrix.target == 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows.zip
+          path: ./release/Windows.zip
+
+      - name: Uploading Windows tagged release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Windows'
+        with:
+          files: ./release/Windows.zip
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      # macOS release
+      - name: Preparing macOS release
+        if: matrix.target == 'macOS'
+        run: |
+          mkdir -p release
+          cp -rf ./alexandrio/build/macos/Build/Products/Release/alexandrio.app ./release/Alexandrio.app
+          cd release && zip -r ./macOS.zip ./Alexandrio.app
+
+      - name: Uploading macOS artifact
+        if: matrix.target == 'macOS'
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS.zip
+          path: ./release/macOS.zip
+
+      - name: Uploading macOS tagged release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'macOS'
+        with:
+          files: ./release/macOS.zip
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      # Linux release
+      - name: Preparing Linux release
+        if: matrix.target == 'Linux'
+        run: |
+          mkdir -p release
+          cp -rf ./alexandrio/build/linux/x64/release/bundle/* ./release
+          cd release && zip -r ./Linux.zip .
+
+      - name: Uploading Linux artifact
+        if: matrix.target == 'Linux'
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux.zip
+          path: ./release/Linux.zip
+
+      - name: Uploading Linux tagged release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Linux'
+        with:
+          files: ./release/Linux.zip
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -34,7 +34,7 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
       var state = client.state as ClientConnected;
 
       var response = await http.get(
-        Uri.parse('https://library.alexandrio.cloud/library/${library.id}/books'),
+        Uri.parse('https://library.preprod.alexandrio.cloud/library/${library.id}/books'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${state.token}',
@@ -53,9 +53,10 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
             BookCubit(
               Book(
                 id: book['id'],
-                title: book['Title'],
-                author: book['Author']?.isEmpty ? null : book['Author'],
-                description: book['Description']?.isEmpty ? null : book['Description'],
+                title: book['Title'] ?? book['title'] ?? 'unnamed',
+                author: book['Author'] ?? book['author'],
+                description: book['Description'] ?? book['description'],
+                thumbnail: (book['thumbnails'] != null && book['thumbnails'].isNotEmpty) ? book['thumbnails'].last.replaceAll('http://', 'https://') : null,
                 // title: book['title'],
                 // author: book['author'],
                 // description: book['description'],

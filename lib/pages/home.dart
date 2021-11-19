@@ -242,15 +242,22 @@ class BookWidget extends StatelessWidget {
               onLongPress: () {
                 BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, book: book, library: library));
               },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Text(
-                    state.title,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              child: state.thumbnail != null
+                  ? Image.network(
+                      state.thumbnail!,
+                      fit: BoxFit.cover,
+                      isAntiAlias: true,
+                      filterQuality: FilterQuality.high,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Text(
+                          state.title,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ),

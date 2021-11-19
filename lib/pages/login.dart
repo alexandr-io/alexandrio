@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ? IconButton(
                                         icon: Icon(Icons.celebration_rounded),
                                         onPressed: () async {
-                                          var response = await http.get(Uri.parse('https://auth.alexandrio.cloud/invitation/new'));
+                                          var response = await http.get(Uri.parse('https://auth.preprod.alexandrio.cloud/invitation/new'));
                                           if (response.statusCode != 200) return;
                                           var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
                                           setState(() {

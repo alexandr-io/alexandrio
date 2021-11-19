@@ -50,7 +50,7 @@ class BookDeleteModal extends StatelessWidget {
                       Navigator.of(context).pop();
                       var clientState = client.state as alexandrio.ClientConnected;
                       var response = await http.delete(
-                        Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}'),
+                        Uri.parse('https://library.preprod.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}'),
                         headers: {
                           'Content-Type': 'application/json',
                           'Authorization': 'Bearer ${clientState.token}',

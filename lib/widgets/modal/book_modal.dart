@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alexandrio/widgets/modal/book_cover_upload_modal.dart';
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_epub_reader/flutter_epub_reader.dart';
@@ -53,7 +54,7 @@ class BookModal extends StatelessWidget {
             onTap: () async {
               var realState = client.state as alexandrio.ClientConnected;
               var response = await http.get(
-                Uri.parse('https://media.alexandrio.cloud/book/${book.state.id}/download'),
+                Uri.parse('https://media.preprod.alexandrio.cloud/book/${book.state.id}/download'),
                 headers: {
                   // 'Content-Type': 'application/json',
                   'Authorization': 'Bearer ${realState.token}',
@@ -77,7 +78,7 @@ class BookModal extends StatelessWidget {
                 ),
               );
               var getProgression = await http.get(
-                Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
+                Uri.parse('https://library.preprod.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
                 headers: {
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ${realState.token}',
@@ -147,6 +148,14 @@ class BookModal extends StatelessWidget {
           //     BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, book: book, library: library));
           //   },
           // ),
+          Tile(
+            leading: Icon(Icons.upload_file),
+            title: 'Upload cover',
+            onTap: () {
+              Navigator.of(context).pop();
+              BottomModal.show(context: context, child: BookCoverUploadModal(client: client, book: book, library: library));
+            },
+          ),
           Tile(
             leading: Icon(Icons.delete),
             title: 'Delete',

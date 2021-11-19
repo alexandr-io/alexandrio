@@ -44,7 +44,7 @@ class ForgotPasswordModal extends StatelessWidget {
                 ),
                 onPressed: () async {
                   var response = await http.post(
-                    Uri.parse('https://auth.alexandrio.cloud/password/reset'),
+                    Uri.parse('https://auth.preprod.alexandrio.cloud/password/reset'),
                     headers: {
                       'Content-Type': 'application/json',
                     },
@@ -93,7 +93,7 @@ class ForgotPasswordModal extends StatelessWidget {
                 ),
                 onPressed: () async {
                   var response = await http.put(
-                    Uri.parse('https://auth.alexandrio.cloud/password/reset'),
+                    Uri.parse('https://auth.preprod.alexandrio.cloud/password/reset'),
                     headers: {
                       'Content-Type': 'application/json',
                     },

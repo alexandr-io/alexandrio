@@ -215,20 +215,20 @@ jobs:
         run: |
           mkdir -p release/Payload
           cp -rf ./${{env.APP_PATH}}/build/ios/iphoneos/Runner.app ./release/Payload/Runner.app
-          ditto -c -k --sequesterRsrc --keepParent ./release/Payload ./release/${{env.APP_TITLE}}-iOS.ipa
+          ditto -c -k --sequesterRsrc --keepParent ./release/Payload ./release/iOS.ipa
 
       - name: Uploading iOS artifact
         if: matrix.target == 'iOS'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APP_TITLE}}-iOS-${{env.GITHUB_SHA}}.ipa
-          path: ./release/${{env.APP_TITLE}}-iOS.ipa
+          name: iOS.ipa
+          path: ./release/iOS.ipa
 
       - name: Uploading iOS tagged release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'iOS'
         with:
-          files: ./release/${{env.APP_TITLE}}-iOS.ipa
+          files: ./release/iOS.ipa
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -237,20 +237,20 @@ jobs:
         if: matrix.target == 'Android'
         run: |
           mkdir release
-          cp ./${{env.APP_PATH}}/build/app/outputs/flutter-apk/app-release.apk ./release/${{env.APP_TITLE}}-Android.apk
+          cp ./${{env.APP_PATH}}/build/app/outputs/flutter-apk/app-release.apk ./release/Android.apk
 
       - name: Uploading Android artifact
         if: matrix.target == 'Android'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APP_TITLE}}-Android-${{env.GITHUB_SHA}}.apk
-          path: ./release/${{env.APP_TITLE}}-Android.apk
+          name: Android.apk
+          path: ./release/Android.apk
 
       - name: Uploading Android tagged release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Android'
         with:
-          files: ./release/${{env.APP_TITLE}}-Android.apk
+          files: ./release/Android.apk
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -260,20 +260,20 @@ jobs:
         run: |
           # mkdir -p release
           cp -rf ./${{env.APP_PATH}}/build/windows/runner/Release ./release
-          echo "powershell Compress-Archive release/* release/${{env.APP_TITLE}}-Windows.zip" | powershell
+          echo "powershell Compress-Archive release/* release/Windows.zip" | powershell
 
       - name: Uploading Windows artifact
         if: matrix.target == 'Windows'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APP_TITLE}}-Windows-${{env.GITHUB_SHA}}.zip
-          path: ./release/${{env.APP_TITLE}}-Windows.zip
+          name: Windows.zip
+          path: ./release/Windows.zip
 
       - name: Uploading Windows tagged release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Windows'
         with:
-          files: ./release/${{env.APP_TITLE}}-Windows.zip
+          files: ./release/Windows.zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -283,20 +283,20 @@ jobs:
         run: |
           mkdir -p release
           cp -rf ./${{env.APP_PATH}}/build/macos/Build/Products/Release/${{env.APP_NAME}}.app ./release/${{env.APP_TITLE}}.app
-          cd release && zip -r ./${{env.APP_TITLE}}-macOS.zip ./${{env.APP_TITLE}}.app
+          cd release && zip -r ./macOS.zip ./${{env.APP_TITLE}}.app
 
       - name: Uploading macOS artifact
         if: matrix.target == 'macOS'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APP_TITLE}}-macOS-${{env.GITHUB_SHA}}.zip
-          path: ./release/${{env.APP_TITLE}}-macOS.zip
+          name: macOS.zip
+          path: ./release/macOS.zip
 
       - name: Uploading macOS tagged release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'macOS'
         with:
-          files: ./release/${{env.APP_TITLE}}-macOS.zip
+          files: ./release/macOS.zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -306,19 +306,19 @@ jobs:
         run: |
           mkdir -p release
           cp -rf ./${{env.APP_PATH}}/build/linux/x64/release/bundle/* ./release
-          cd release && zip -r ./${{env.APP_TITLE}}-Linux.zip .
+          cd release && zip -r ./Linux.zip .
 
       - name: Uploading Linux artifact
         if: matrix.target == 'Linux'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APP_TITLE}}-Linux-${{env.GITHUB_SHA}}.zip
-          path: ./release/${{env.APP_TITLE}}-Linux.zip
+          name: Linux.zip
+          path: ./release/Linux.zip
 
       - name: Uploading Linux tagged release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'Linux'
         with:
-          files: ./release/${{env.APP_TITLE}}-Linux.zip
+          files: ./release/Linux.zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

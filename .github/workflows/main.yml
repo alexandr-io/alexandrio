@@ -24,6 +24,11 @@ jobs:
 
     name: ${{matrix.target}}
     runs-on: ${{matrix.os}}
+    env:
+      APP_TITLE: Alexandrio
+      APP_NAME: alexandrio
+      APP_PATH: alexandrio
+      APP_ORG: com.alexandrio
 
     steps:
       - name: Set up sed
@@ -63,10 +68,10 @@ jobs:
           repository: alexandr-io/flutter_pdf_parser
           path: flutter_pdf_parser
 
-      - name: Checking out Alexandrio source code
+      - name: Checking out ${{env.APP_TITLE}} source code
         uses: actions/checkout@v2
         with:
-          path: alexandrio
+          path: ${{env.APP_PATH}}
 
       - name: Setting up Java
         if: matrix.target == 'Android'
@@ -81,7 +86,7 @@ jobs:
 
       - name: Changing version number and build number to the Github Tag
         if: startsWith(github.ref, 'refs/tags/')
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: |
           ${{env.sed}} -i "s/^version: .*$/version: ${GITHUB_REF/refs\/tags\//}/" ./pubspec.yaml
           cat ./pubspec.yaml
@@ -94,25 +99,25 @@ jobs:
           ${{env.sed}} -i '/_frameDuration = _nextFrame!.duration;/a \ \ \ \ \ \ if (_frameDuration!.inMilliseconds <= 10) _frameDuration = Duration(milliseconds: 100);' $(which flutter | head -n 1 | ${{env.sed}} -e 's/\\/\//g' -e 's/\/bin\/flutter.*//')/packages/flutter/lib/src/painting/image_stream.dart
 
       - name: Create project for Android
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Android'
         run: |
-          flutter create --platforms android,ios --org com.alexandrio .
+          flutter create --platforms android,ios --org ${{env.APP_ORG}} .
           # Allow building with a WebView on older platforms        # ${{env.sed}} -i 's/minSdkVersion 16/minSdkVersion 19/' ./android/app/build.gradle
           ${{env.sed}} -i '/<\/manifest>/i \ \ \ \ <uses-sdk tools:overrideLibrary="io.flutter.plugins.webviewflutter"/>' ./android/app/src/main/AndroidManifest.xml
           ${{env.sed}} -i '/.*package=".*".*/i \ \ \ \ xmlns:tools="http://schemas.android.com/tools"' ./android/app/src/main/AndroidManifest.xml
           # Change the app title
-          ${{env.sed}} -i 's/android:label=".*"/android:label="Alexandrio"/' ./android/app/src/main/AndroidManifest.xml
+          ${{env.sed}} -i 's/android:label=".*"/android:label="${{env.APP_TITLE}}"/' ./android/app/src/main/AndroidManifest.xml
           # Add Internet permission
           ${{env.sed}} -i '/.*package=".*".*/a \ \ \ <uses-permission android:name="android.permission.INTERNET"/>' ./android/app/src/main/AndroidManifest.xml
           # Fix for some 3rd party libraries
           ${{env.sed}} -i '/.*release {.*/a \ \ \ \ \ \ \ \ \ \ \ \ shrinkResources false\n\ \ \ \ \ \ \ \ \ \ \ \ minifyEnabled false' ./android/app/build.gradle
           # Add support for drawing behind the navbar on Android 11+
-          ${{env.sed}} -i "/io.flutter.embedding.android.FlutterActivity/a import android.os.Bundle\nimport android.os.Build\nimport androidx.annotation.NonNull\nimport io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode.transparent\nimport io.flutter.embedding.engine.FlutterEngine\nimport io.flutter.plugins.GeneratedPluginRegistrant" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
-          ${{env.sed}} -i "/FlutterActivity()/a \ \ \ \ override fun onCreate(savedInstanceState: Bundle?) {\n\ \ \ \ \ \ \ \ super.onCreate(savedInstanceState)\n\ \ \ \ \ \ \ \ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {\n\ \ \ \ \ \ \ \ \ \ \ \ window.setDecorFitsSystemWindows(false)\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }" android/app/src/main/kotlin/com/alexandrio/alexandrio/MainActivity.kt
+          ${{env.sed}} -i "/io.flutter.embedding.android.FlutterActivity/a import android.os.Bundle\nimport android.os.Build\nimport androidx.annotation.NonNull\nimport io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode.transparent\nimport io.flutter.embedding.engine.FlutterEngine\nimport io.flutter.plugins.GeneratedPluginRegistrant" $(find . -name "MainActivity.kt")
+          ${{env.sed}} -i "/FlutterActivity()/a \ \ \ \ override fun onCreate(savedInstanceState: Bundle?) {\n\ \ \ \ \ \ \ \ super.onCreate(savedInstanceState)\n\ \ \ \ \ \ \ \ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {\n\ \ \ \ \ \ \ \ \ \ \ \ window.setDecorFitsSystemWindows(false)\n\ \ \ \ \ \ \ \ }\n\ \ \ \ }" $(find . -name "MainActivity.kt")
 
       - name: Add signing to the project for Android
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
         run: |
           # Signing profile
@@ -121,87 +126,87 @@ jobs:
           ${{env.sed}} -i 's/signingConfig signingConfigs.debug/signingConfig signingConfigs.release/' ./android/app/build.gradle
 
       - name: Create project for iOS
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'iOS'
         run: |
-          flutter create --platforms ios,android --org com.alexandrio .
+          flutter create --platforms ios,android --org ${{env.APP_ORG}} .
           # Add notification support on the native side
           ${{env.sed}} -i '/-> Bool {/a \ \ \ \ if #available(iOS 10.0, *) {\ \ \ \ \ \ UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate\ \ \ \ }' ./ios/Runner/AppDelegate.swift
           # Change the app title
-          ${{env.sed}} -i 's/<string>alexandrio<\/string>/<string>Alexandrio<\/string>/' ./ios/Runner/Info.plist
+          ${{env.sed}} -i 's/<string>${{env.APP_NAME}}<\/string>/<string>${{env.APP_TITLE}}<\/string>/' ./ios/Runner/Info.plist
           # Background modes
           ${{env.sed}} -i '/<dict>/a \ \ <key>UIBackgroundModes</key>\n\ \ <array>\n\ \ \ \ <string>audio</string>\n\ \ </array>' ios/Runner/Info.plist
           # Library usage description
-          ${{env.sed}} -i '/<dict>/a \ \ <key>NSPhotoLibraryUsageDescription</key>\n\ \ <string>Alexandrio requests to access your files to allow file selection.</string>' ios/Runner/Info.plist
+          ${{env.sed}} -i '/<dict>/a \ \ <key>NSPhotoLibraryUsageDescription</key>\n\ \ <string>${{env.APP_TITLE}} requests to access your files to allow file selection.</string>' ios/Runner/Info.plist
 
       - name: Create project for Windows
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Windows'
         run: |
           flutter config --enable-windows-desktop
-          flutter create --platforms windows --org com.alexandrio .
+          flutter create --platforms windows --org ${{env.APP_ORG}} .
 
       - name: Create project for Linux
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Linux'
         run: |
           flutter config --enable-linux-desktop
-          flutter create --platforms linux --org com.alexandrio .
+          flutter create --platforms linux --org ${{env.APP_ORG}} .
 
       - name: Create project for macOS
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'macOS'
         run: |
           flutter config --enable-macos-desktop
-          flutter create --platforms macos --org com.alexandrio .
+          flutter create --platforms macos --org ${{env.APP_ORG}} .
           # Add permissions for networking and file picker
           ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.network.client</key>\n\ \ <true/>' macos/Runner/Release.entitlements
           ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.files.user-selected.read-only</key>\n\ \ <true/>' macos/Runner/Release.entitlements
           ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.network.client</key>\n\ \ <true/>' macos/Runner/DebugProfile.entitlements
           ${{env.sed}} -i '/<dict>/a \ \ <key>com.apple.security.files.user-selected.read-only</key>\n\ \ <true/>' macos/Runner/DebugProfile.entitlements
           # Change the app title
-          ${{env.sed}} -i 's/<string>$(PRODUCT_NAME)<\/string>/<string>Alexandrio<\/string>/' ./macos/Runner/Info.plist
+          ${{env.sed}} -i 's/<string>$(PRODUCT_NAME)<\/string>/<string>${{env.APP_TITLE}}<\/string>/' ./macos/Runner/Info.plist
 
       - name: Cleaning up the test directory
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: rm -rf test
 
       - name: Temporarily fix generating icons for the app
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Android' || matrix.target == 'iOS'
         run: |
           ${{env.sed}} -i 's/minSdkVersion .*/minSdkVersion 21/' ./android/app/build.gradle
 
       - name: Building the launcher icon
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Android' || matrix.target == 'iOS'
         run: flutter pub run flutter_launcher_icons:main
 
       - name: Build on Android
         if: matrix.target == 'Android'
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: flutter build apk
 
       - name: Build on iOS
         if: matrix.target == 'iOS'
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: flutter build ios --no-codesign
 
       - name: Build on Windows
         if: matrix.target == 'Windows'
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: flutter build windows
 
       - name: Build on Linux
         if: matrix.target == 'Linux'
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: |
           sudo apt install libgtk-3-dev ninja-build
           flutter build linux
 
       - name: Build on macOS
         if: matrix.target == 'macOS'
-        working-directory: ./alexandrio
+        working-directory: ${{env.APP_PATH}}
         run: flutter build macos
 
       # iOS release
@@ -209,7 +214,7 @@ jobs:
         if: matrix.target == 'iOS'
         run: |
           mkdir -p release/Payload
-          cp -rf ./alexandrio/build/ios/iphoneos/Runner.app ./release/Payload/Runner.app
+          cp -rf ./${{env.APP_PATH}}/build/ios/iphoneos/Runner.app ./release/Payload/Runner.app
           ditto -c -k --sequesterRsrc --keepParent ./release/Payload ./release/iOS.ipa
 
       - name: Uploading iOS artifact
@@ -232,7 +237,7 @@ jobs:
         if: matrix.target == 'Android'
         run: |
           mkdir release
-          cp ./alexandrio/build/app/outputs/flutter-apk/app-release.apk ./release/Android.apk
+          cp ./${{env.APP_PATH}}/build/app/outputs/flutter-apk/app-release.apk ./release/Android.apk
 
       - name: Uploading Android artifact
         if: matrix.target == 'Android'
@@ -254,7 +259,7 @@ jobs:
         if: matrix.target == 'Windows'
         run: |
           # mkdir -p release
-          cp -rf ./alexandrio/build/windows/runner/Release ./release
+          cp -rf ./${{env.APP_PATH}}/build/windows/runner/Release ./release
           echo "powershell Compress-Archive release/* release/Windows.zip" | powershell
 
       - name: Uploading Windows artifact
@@ -277,8 +282,8 @@ jobs:
         if: matrix.target == 'macOS'
         run: |
           mkdir -p release
-          cp -rf ./alexandrio/build/macos/Build/Products/Release/alexandrio.app ./release/Alexandrio.app
-          cd release && zip -r ./macOS.zip ./Alexandrio.app
+          cp -rf ./${{env.APP_PATH}}/build/macos/Build/Products/Release/${{env.APP_NAME}}.app ./release/${{env.APP_TITLE}}.app
+          cd release && zip -r ./macOS.zip ./${{env.APP_TITLE}}.app
 
       - name: Uploading macOS artifact
         if: matrix.target == 'macOS'
@@ -300,7 +305,7 @@ jobs:
         if: matrix.target == 'Linux'
         run: |
           mkdir -p release
-          cp -rf ./alexandrio/build/linux/x64/release/bundle/* ./release
+          cp -rf ./${{env.APP_PATH}}/build/linux/x64/release/bundle/* ./release
           cd release && zip -r ./Linux.zip .
 
       - name: Uploading Linux artifact

@@ -14,34 +14,36 @@ import 'app.dart';
 import 'api/alexandrio/alexandrio.dart' as alexandrio;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
-
-  Hive.registerAdapter(OfflineBookAdapter());
-
-  if (Platform.isIOS || Platform.isAndroid) {
-    await Hive.initFlutter();
-  } else {
-    Hive.init('.');
-  }
-
-  var themeBox = await Hive.openBox('Theme');
-  var booksBox = await Hive.openBox('Books');
-  var accountBox = await Hive.openBox('Account');
-
   await SentryFlutter.init(
     (options) {
-      options.dsn = 'https://ce5c24bd75f748308af01461b9112705@sentry.chatsen.app/4';
+      options.dsn = 'https://9f8539e8123e450e8e40e07d2762d3a4@sentry.chatsen.app/6';
     },
-    appRunner: () => runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => alexandrio.ClientBloc(accountBox)),
-          BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
-          BlocProvider(create: (context) => DownloadManager()),
-        ],
-        child: App(),
-      ),
-    ),
+    appRunner: () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      // await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+
+      Hive.registerAdapter(OfflineBookAdapter());
+
+      if (Platform.isIOS || Platform.isAndroid) {
+        await Hive.initFlutter();
+      } else {
+        Hive.init('.');
+      }
+
+      var themeBox = await Hive.openBox('Theme');
+      var booksBox = await Hive.openBox('Books');
+      var accountBox = await Hive.openBox('Account');
+
+      runApp(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => alexandrio.ClientBloc(accountBox)),
+            BlocProvider(create: (context) => ThemeBloc(themeBox, colorScheme: 'green', mode: ThemeMode.system)),
+            BlocProvider(create: (context) => DownloadManager()),
+          ],
+          child: App(),
+        ),
+      );
+    },
   );
 }

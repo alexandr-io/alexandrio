@@ -9,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'dart:ui';
 
+import 'pages/feedback.dart';
 import 'pages/update.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
@@ -50,10 +51,8 @@ class App extends StatelessWidget {
                 initialRoute: initialRoute ?? routeManager.initialRoute,
                 onGenerateInitialRoutes: routeManager.onGenerateInitialRoutes,
                 onGenerateRoute: routeManager.onGenerateRoute,
-                darkTheme:
-                    ThemeManager.buildTheme(Brightness.dark, state.colorScheme),
-                theme: ThemeManager.buildTheme(
-                    Brightness.light, state.colorScheme),
+                darkTheme: ThemeManager.buildTheme(Brightness.dark, state.colorScheme),
+                theme: ThemeManager.buildTheme(Brightness.light, state.colorScheme),
                 themeMode: state.mode,
                 debugShowCheckedModeBanner: false,
               ),
@@ -63,6 +62,7 @@ class App extends StatelessWidget {
                 '/login': () => LoginPage(),
                 '/settings': () => SettingsPage(),
                 '/offline': () => OfflinePage(),
+                '/feedback': () => FeedbackPage(),
                 '/': () => HomePage(),
               },
             );

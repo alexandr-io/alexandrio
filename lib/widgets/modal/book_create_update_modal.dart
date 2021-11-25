@@ -13,6 +13,7 @@ class BookCreateUpdateModal extends StatefulWidget {
   final alexandrio.ClientBloc client;
   final alexandrio.BookCubit? book;
   final alexandrio.LibraryCubit library;
+  final String? title;
   final Uint8List? bytes;
 
   const BookCreateUpdateModal({
@@ -20,6 +21,7 @@ class BookCreateUpdateModal extends StatefulWidget {
     required this.client,
     this.book,
     required this.library,
+    this.title,
     this.bytes,
   }) : super(key: key);
 
@@ -34,7 +36,7 @@ class _BookCreateUpdateModalState extends State<BookCreateUpdateModal> {
 
   @override
   void initState() {
-    titleController = TextEditingController(text: widget.book?.state.title);
+    titleController = TextEditingController(text: widget.book?.state.title ?? widget.title);
     authorController = TextEditingController(text: widget.book?.state.author);
     descriptionController = TextEditingController(text: widget.book?.state.description);
     super.initState();

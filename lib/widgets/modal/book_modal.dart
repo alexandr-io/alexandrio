@@ -60,7 +60,7 @@ class BookModal extends StatelessWidget {
                   'Authorization': 'Bearer ${realState.token}',
                 },
               );
-              if (response.statusCode != 200) {
+              if (response.statusCode != 200 && response.statusCode != 204 && response.statusCode != 201) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Couldn\'t download book'),
                   behavior: SnackBarBehavior.floating,
@@ -86,7 +86,7 @@ class BookModal extends StatelessWidget {
                 },
               );
               var progress = '';
-              if (getProgression.statusCode != 200) {
+              if (getProgression.statusCode != 200 && getProgression.statusCode != 404) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Couldn\'t get progress'),
                   behavior: SnackBarBehavior.floating,

@@ -16,7 +16,7 @@ import 'api/alexandrio/alexandrio.dart' as alexandrio;
 Future<void> main() async {
   await SentryFlutter.init(
     (options) {
-      options.dsn = 'https://9f8539e8123e450e8e40e07d2762d3a4@sentry.chatsen.app/6';
+      options.dsn = 'https://595138d25a0848e28c8266375e08a659@sentry.alexandrio.cloud/3';
     },
     appRunner: () async {
       WidgetsFlutterBinding.ensureInitialized();

@@ -192,7 +192,7 @@ class LibraryDisplay extends StatelessWidget {
                                 type: FileTypeCross.custom,
                                 fileExtension: 'pdf, epub',
                               );
-                              await BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, bytes: file.toUint8List(), library: library));
+                              await BottomModal.show(context: context, child: BookCreateUpdateModal(client: client, bytes: file.toUint8List(), library: library, title: file.fileName?.split('.').first.replaceAll('-', ' ').replaceAll('_', ' ')));
                             },
                             child: Icon(Icons.add),
                           ),

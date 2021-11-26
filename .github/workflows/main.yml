@@ -190,7 +190,15 @@ jobs:
       - name: Building the macOS icon
         working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'macOS'
-        run: find macos/Runner/Assets.xcassets/AppIcon.appiconset -name "*.png" -exec cp assets/logo-original.png {} \;
+        run: |
+          find macos/Runner/Assets.xcassets/AppIcon.appiconset -name "*.png" -exec cp assets/logo-original.png {} \;
+          sips -Z 16 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png
+          sips -Z 32 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png
+          sips -Z 64 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png
+          sips -Z 128 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png
+          sips -Z 256 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png
+          sips -Z 512 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png
+          sips -Z 1024 macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png
 
       - name: Build on Android
         if: matrix.target == 'Android'

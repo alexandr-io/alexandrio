@@ -52,7 +52,7 @@ jobs:
         if: matrix.target == 'Android' && github.repository_owner == 'alexandr-io'
         with:
           repository: alexandr-io/signingkeys
-          ref: 'master'
+          ref: master
           token: ${{secrets.GHKEY}}
           path: signingkeys
 
@@ -186,6 +186,11 @@ jobs:
         working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Windows'
         run: cp -f assets/logo-original.ico windows/runner/resources/app_icon.ico
+
+      - name: Building the macOS icon
+        working-directory: ${{env.APP_PATH}}
+        if: matrix.target == 'macOS'
+        run: find macos/Runner/Assets.xcassets/AppIcon.appiconset -name "*.png" -exec cp assets/logo-original.png {} \;
 
       - name: Build on Android
         if: matrix.target == 'Android'

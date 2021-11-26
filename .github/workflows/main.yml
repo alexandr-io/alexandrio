@@ -177,10 +177,15 @@ jobs:
         run: |
           ${{env.sed}} -i 's/minSdkVersion .*/minSdkVersion 21/' ./android/app/build.gradle
 
-      - name: Building the launcher icon
+      - name: Building the application icons
         working-directory: ${{env.APP_PATH}}
         if: matrix.target == 'Android' || matrix.target == 'iOS'
         run: flutter pub run flutter_launcher_icons:main
+
+      - name: Building the Windows icon
+        working-directory: ${{env.APP_PATH}}
+        if: matrix.target == 'Windows'
+        run: cp -f assets/logo-original.ico windows/runner/resources/app_icon.ico
 
       - name: Build on Android
         if: matrix.target == 'Android'

@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:alexandrio/pages/user.dart';
 import 'package:alexandrio/widgets/modal/update_modal.dart';
 import 'package:amberkit/amberkit.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
@@ -5,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:version/version.dart';
+import 'package:http/http.dart' as http;
 
 import '/widgets/modal/library_modal.dart';
 import '/widgets/modal/book_create_update_modal.dart';
@@ -55,6 +60,32 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.of(context).pushNamed('/feedback');
               },
+            ),
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              onPressed: () async {
+                var realState = client.state as alexandrio.ClientConnected;
+                var getUserInfo = await http.get(
+                  Uri.parse('https://user.alexandrio.cloud/user'),
+                  headers: {
+                    'Authorization': 'Bearer ${realState.token}'
+                  }
+                );
+                var username = '';
+                var email = '';
+                if (getUserInfo.statusCode != 200) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Couldn\'t get user data'),
+                    behavior: SnackBarBehavior.floating,
+                  )); 
+                } else {
+                  var json = jsonDecode(utf8.decode(getUserInfo.bodyBytes));
+                  username = json['username'];
+                  email = json['email'];
+                }
+
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => UserPage(username: username, email: email)));
+              }
             ),
             IconButton(
               icon: Icon(Icons.settings),

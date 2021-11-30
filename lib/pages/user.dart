@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:amberkit/amberkit.dart';
@@ -6,16 +5,14 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_epub_reader/flutter_epub.dart';
 import 'package:http/http.dart' as http;
 
+import '../widgets/modal/change_password_modal.dart';
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
 
 class UserPage extends StatefulWidget {
   final String username;
   final String email;
 
-  const UserPage({
-    required this.username,
-    required this.email
-  });
+  const UserPage({required this.username, required this.email});
 
   @override
   State<UserPage> createState() => _UserPageState();
@@ -23,40 +20,40 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   late alexandrio.ClientBloc client;
+  late alexandrio.ClientConnected realState;
+
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
   late TextEditingController _previousPassword;
   late TextEditingController _resetPassword;
   late TextEditingController _confirmResetPassword;
 
-  Future<bool> _changePassword() async {
-    var realState = client.state as alexandrio.ClientConnected;
-    var changePassword = await http.put(
-      Uri.parse('https://auth.alexandrio.cloud/password/update'),
-      headers: {
-        'Authorization': 'Bearer ${realState.token}'
-      },
-      body: jsonEncode({
-        'current_password': _previousPassword.text,
-        'new_password': _resetPassword.text
-      })
-    );
+  int getBookCount() {
+    var total = 0;
 
-    if (changePassword.statusCode != 200) {
-      return false;
+    for (var library in realState.libraries.state!) {
+      total += library.books.state!.length;
     }
-    return true;
+
+    return total;
   }
 
   @override
   void initState() {
     client = BlocProvider.of<alexandrio.ClientBloc>(context);
+    _usernameController = TextEditingController(text: widget.username);
+    _emailController = TextEditingController(text: widget.email);
     _previousPassword = TextEditingController();
     _resetPassword = TextEditingController();
     _confirmResetPassword = TextEditingController();
+    realState = client.state as alexandrio.ClientConnected;
     super.initState();
   }
 
   @override
   void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
     _previousPassword.dispose();
     _resetPassword.dispose();
     _confirmResetPassword.dispose();
@@ -65,130 +62,65 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('User page')
-    ),
-    body: Padding(
-        padding: EdgeInsets.all(kPadding.horizontal / 3.0) + EdgeInsets.symmetric(horizontal: kPadding.horizontal / 3.0),
-        child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            // color: Colors.red,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Name',  style: Theme.of(context).textTheme.headline5!.copyWith(fontWeight: FontWeight.bold)),
-                SizedBox(height: kPadding.vertical * 0.25),
-                Text(widget.username),
-              ]
-            )
-          ),
-          SizedBox(height: kPadding.vertical),
-          Container(
-            // color: Colors.blue,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Email',  style: Theme.of(context).textTheme.headline5!.copyWith(fontWeight: FontWeight.bold)),
-                SizedBox(height: kPadding.vertical * 0.25),
-                Text(widget.email),
-              ]
-            )
-          ),
-          SizedBox(height: kPadding.vertical),
-          TextButton(
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.headline5!.copyWith(fontWeight: FontWeight.bold),
+        appBar: AppBar(title: const Text('User page')),
+        body: ListView(
+          padding: EdgeInsets.all(8.0),
+          children: [
+            TextField(
+              controller: _usernameController,
+              readOnly: true,
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Username',
+              ),
             ),
-            onPressed: () {
-              showDialog(
-                context: context, 
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Reset your password'),
-                    content: Column(
-                      children: [
-                        SizedBox(height: kPadding.vertical * 2),
-                        TextField(
-
-                        ),
-                        SizedBox(height: kPadding.vertical),
-                        TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'New password'
-                          ),
-                          controller: _resetPassword
-                        ),
-                        // SizedBox(height: kPadding.vertical),
-                        // TextField(
-                        //   decoration: InputDecoration(
-                        //     border: OutlineInputBorder(),
-                        //     labelText: 'Confirm your new password'
-                        //   ),
-                        //   controller: _confirmResetPassword
-                        // )
-                      ],
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          _previousPassword.clear();
-                          _resetPassword.clear();
-                          _confirmResetPassword.clear();
-                          Navigator.pop(context, false);
-                        },
-                        child: const Text('Cancel')
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _changePassword();
-                          _previousPassword.clear();
-                          _resetPassword.clear();
-                          _confirmResetPassword.clear();
-                          Navigator.pop(context, true);
-                        },
-                        child: const Text('Reset password')
-                      )
+            SizedBox(height: 8.0),
+            TextField(
+              controller: _emailController,
+              readOnly: true,
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Email',
+              ),
+            ),
+            SizedBox(height: 8.0),
+            OutlinedButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.all(16.0)),
+              ),
+              onPressed: () {
+                var realState = client.state as alexandrio.ClientConnected;
+                BottomModal.show(
+                  child: ChangePasswordModal(
+                    token: realState.token,
+                  ),
+                  context: context,
+                );
+              },
+              child: Text('Reset password'),
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text('Books', style: Theme.of(context).textTheme.headline5),
+                      Text('${getBookCount()}', style: Theme.of(context).textTheme.headline6),
                     ],
-                  );
-                }
-              );
-            },
-            child: const Text('Reset password')
-          ),
-          // Row(
-          //   mainAxisSize: MainAxisSize.min,
-          //   crossAxisAlignment: CrossAxisAlignment.center,
-          //   children: [
-          //     Container(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: Column(
-          //         children: [
-          //           Text('Books',  style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
-          //           Text('10'),
-          //         ],
-          //       )
-          //     ),
-          //     Container(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: Column(
-          //         children: [
-          //           Text('Libraries',  style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold)),
-          //           Text('26')
-          //         ],
-          //       )
-          //     )                
-          //   ]
-          // )
-        ]
-      )
-      //  )
-      // )  
-    )
-  );
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text('Libraries', style: Theme.of(context).textTheme.headline5),
+                      Text('${realState.libraries.state!.length}', style: Theme.of(context).textTheme.headline6),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
 }

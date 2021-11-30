@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 var realState = client.state as alexandrio.ClientConnected;
                 var getUserInfo = await http.get(
-                  Uri.parse('https://user.alexandrio.cloud/user'),
+                  Uri.parse('https://user.preprod.alexandrio.cloud/user'),
                   headers: {
                     'Authorization': 'Bearer ${realState.token}'
                   }

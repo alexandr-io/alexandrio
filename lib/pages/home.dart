@@ -62,31 +62,25 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.account_circle),
-              onPressed: () async {
-                var realState = client.state as alexandrio.ClientConnected;
-                var getUserInfo = await http.get(
-                  Uri.parse('https://user.preprod.alexandrio.cloud/user'),
-                  headers: {
-                    'Authorization': 'Bearer ${realState.token}'
+                icon: Icon(Icons.account_circle),
+                onPressed: () async {
+                  var realState = client.state as alexandrio.ClientConnected;
+                  var getUserInfo = await http.get(Uri.parse('https://user.preprod.alexandrio.cloud/user'), headers: {'Authorization': 'Bearer ${realState.token}'});
+                  var username = '';
+                  var email = '';
+                  if (getUserInfo.statusCode != 200) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Couldn\'t get user data'),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  } else {
+                    var json = jsonDecode(utf8.decode(getUserInfo.bodyBytes));
+                    username = json['username'];
+                    email = json['email'];
                   }
-                );
-                var username = '';
-                var email = '';
-                if (getUserInfo.statusCode != 200) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Couldn\'t get user data'),
-                    behavior: SnackBarBehavior.floating,
-                  )); 
-                } else {
-                  var json = jsonDecode(utf8.decode(getUserInfo.bodyBytes));
-                  username = json['username'];
-                  email = json['email'];
-                }
 
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => UserPage(username: username, email: email)));
-              }
-            ),
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => UserPage(username: username, email: email)));
+                }),
             IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {

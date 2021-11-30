@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:amberkit/amberkit.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_epub_reader/flutter_epub.dart';
-import 'package:http/http.dart' as http;
 
 import '../widgets/modal/change_password_modal.dart';
 import '/api/alexandrio/alexandrio.dart' as alexandrio;
@@ -26,7 +22,6 @@ class _UserPageState extends State<UserPage> {
   late TextEditingController _emailController;
   late TextEditingController _previousPassword;
   late TextEditingController _resetPassword;
-  late TextEditingController _confirmResetPassword;
 
   int getBookCount() {
     var total = 0;
@@ -45,7 +40,6 @@ class _UserPageState extends State<UserPage> {
     _emailController = TextEditingController(text: widget.email);
     _previousPassword = TextEditingController();
     _resetPassword = TextEditingController();
-    _confirmResetPassword = TextEditingController();
     realState = client.state as alexandrio.ClientConnected;
     super.initState();
   }
@@ -56,7 +50,6 @@ class _UserPageState extends State<UserPage> {
     _emailController.dispose();
     _previousPassword.dispose();
     _resetPassword.dispose();
-    _confirmResetPassword.dispose();
     super.dispose();
   }
 

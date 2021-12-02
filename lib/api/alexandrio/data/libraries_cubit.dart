@@ -30,7 +30,7 @@ class LibrariesCubit extends Cubit<List<LibraryCubit>?> {
 
   Future<void> refresh() async {
     var response = await http.get(
-      Uri.parse('https://library.preprod.alexandrio.cloud/libraries'),
+      Uri.parse('https://library.alexandrio.cloud/libraries'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

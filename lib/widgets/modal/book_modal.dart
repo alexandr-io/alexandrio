@@ -54,7 +54,7 @@ class BookModal extends StatelessWidget {
             onTap: () async {
               var realState = client.state as alexandrio.ClientConnected;
               var response = await http.get(
-                Uri.parse('https://media.preprod.alexandrio.cloud/book/${book.state.id}/download'),
+                Uri.parse('https://media.alexandrio.cloud/book/${book.state.id}/download'),
                 headers: {
                   // 'Content-Type': 'application/json',
                   'Authorization': 'Bearer ${realState.token}',
@@ -79,7 +79,7 @@ class BookModal extends StatelessWidget {
                 ),
               );
               var getProgression = await http.get(
-                Uri.parse('https://library.preprod.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
+                Uri.parse('https://library.alexandrio.cloud/library/${library.state.id}/book/${book.state.id}/progress'),
                 headers: {
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ${realState.token}',

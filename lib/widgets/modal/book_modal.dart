@@ -85,14 +85,16 @@ class BookModal extends StatelessWidget {
                   'Authorization': 'Bearer ${realState.token}',
                 },
               );
-              var progress = '';
-              if (getProgression.statusCode != 200 && getProgression.statusCode != 404) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Couldn\'t get progress'),
-                  behavior: SnackBarBehavior.floating,
-                ));
+              var progress = '0';
+              if (getProgression.statusCode != 200) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Couldn\'t get progress'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
               } else {
-                var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '';
+                var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '0';
                 progress = json['progress'];
               }
               switch (contentType) {

@@ -100,7 +100,7 @@ class _LibraryCreateUpdateModalState extends State<LibraryCreateUpdateModal> {
                       } else {
                         var clientState = widget.client.state as alexandrio.ClientConnected;
                         var response = await http.post(
-                          Uri.parse('https://library.preprod.alexandrio.cloud/library'),
+                          Uri.parse('https://library.alexandrio.cloud/library'),
                           headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ${clientState.token}',

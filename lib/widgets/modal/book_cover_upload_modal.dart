@@ -61,7 +61,7 @@ class BookCoverUploadModal extends StatelessWidget {
 
                       var request = http.MultipartRequest(
                         'POST',
-                        Uri.parse('https://media.preprod.alexandrio.cloud/book/cover/upload'),
+                        Uri.parse('https://media.alexandrio.cloud/book/cover/upload'),
                       );
                       request.files.add(
                         http.MultipartFile.fromBytes(

@@ -24,7 +24,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
         var realState = state as ClientConnected;
 
         var response = await http.post(
-          Uri.parse('https://auth.preprod.alexandrio.cloud/login'),
+          Uri.parse('https://auth.alexandrio.cloud/login'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -53,7 +53,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
 
       try {
         var response = await http.post(
-          Uri.parse('https://auth.preprod.alexandrio.cloud/login'),
+          Uri.parse('https://auth.alexandrio.cloud/login'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -79,7 +79,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
     } else if (event is ClientRegister) {
       try {
         var response = await http.post(
-          Uri.parse('https://auth.preprod.alexandrio.cloud/register'),
+          Uri.parse('https://auth.alexandrio.cloud/register'),
           headers: {
             'Content-Type': 'application/json',
           },

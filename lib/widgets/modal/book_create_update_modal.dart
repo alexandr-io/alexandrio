@@ -124,7 +124,7 @@ class _BookCreateUpdateModalState extends State<BookCreateUpdateModal> {
                         // bytes
                         var clientState = widget.client.state as alexandrio.ClientConnected;
                         var response = await http.post(
-                          Uri.parse('https://library.preprod.alexandrio.cloud/library/${widget.library.state.id}/book'),
+                          Uri.parse('https://library.alexandrio.cloud/library/${widget.library.state.id}/book'),
                           headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ${clientState.token}',
@@ -139,7 +139,7 @@ class _BookCreateUpdateModalState extends State<BookCreateUpdateModal> {
 
                         var request = http.MultipartRequest(
                           'POST',
-                          Uri.parse('https://media.preprod.alexandrio.cloud/book/upload'),
+                          Uri.parse('https://media.alexandrio.cloud/book/upload'),
                         );
                         request.files.add(
                           http.MultipartFile.fromBytes(

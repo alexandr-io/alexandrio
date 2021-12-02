@@ -34,7 +34,7 @@ class BooksCubit extends Cubit<List<BookCubit>?> {
       var state = client.state as ClientConnected;
 
       var response = await http.get(
-        Uri.parse('https://library.preprod.alexandrio.cloud/library/${library.id}/books'),
+        Uri.parse('https://library.alexandrio.cloud/library/${library.id}/books'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${state.token}',

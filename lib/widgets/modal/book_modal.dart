@@ -86,14 +86,7 @@ class BookModal extends StatelessWidget {
                 },
               );
               var progress = '0';
-              if (getProgression.statusCode != 200) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Couldn\'t get progress'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              } else {
+              if (getProgression.statusCode == 200) {
                 var json = jsonDecode(utf8.decode(getProgression.bodyBytes)) ?? '0';
                 progress = json['progress'];
               }

@@ -49,7 +49,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Alexandrio'),
+          title: Text(
+            'Alexandrio',
+            style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+          ),
           centerTitle: true,
           // foregroundColor: Colors.transparent,
           backgroundColor: Colors.transparent,
@@ -65,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.account_circle),
                 onPressed: () async {
                   var realState = client.state as alexandrio.ClientConnected;
-                  var getUserInfo = await http.get(Uri.parse('https://user.preprod.alexandrio.cloud/user'), headers: {'Authorization': 'Bearer ${realState.token}'});
+                  var getUserInfo = await http.get(Uri.parse('https://user.alexandrio.cloud/user'), headers: {'Authorization': 'Bearer ${realState.token}'});
                   var username = '';
                   var email = '';
                   if (getUserInfo.statusCode != 200) {
@@ -81,12 +84,12 @@ class _HomePageState extends State<HomePage> {
 
                   await Navigator.push(context, MaterialPageRoute(builder: (context) => UserPage(username: username, email: email)));
                 }),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/settings');
-              },
-            ),
+            // IconButton(
+            //   icon: Icon(Icons.settings),
+            //   onPressed: () {
+            //     Navigator.of(context).pushNamed('/settings');
+            //   },
+            // ),
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
